@@ -19,12 +19,18 @@ interface DoubanCategoryApiResponse {
   }>;
 }
 
+// We cache successful responses for up to cache_time seconds (see below), so the
+// only case this timeout matters is a cold cache miss. Fail faster (6s instead
+// of 10s) so the homepage skeleton doesn't spin if Douban is slow/blocked from
+// the Cloudflare edge region.
+const DOUBAN_TIMEOUT_MS = 6000;
+
 async function fetchDoubanData(
   url: string
 ): Promise<DoubanCategoryApiResponse> {
   // 添加超时控制
   const controller = new AbortController();
-  const timeoutId = setTimeout(() => controller.abort(), 10000); // 10秒超时
+  const timeoutId = setTimeout(() => controller.abort(), DOUBAN_TIMEOUT_MS);
 
   // 设置请求选项，包括信号和头部
   const fetchOptions = {
