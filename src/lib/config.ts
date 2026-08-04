@@ -483,6 +483,19 @@ export async function getCacheTime(): Promise<number> {
   return config.SiteConfig.SiteInterfaceCacheTime || 7200;
 }
 
+/**
+ * 返回豆瓣代理地址（优先取后台设置，其次取 NEXT_PUBLIC_DOUBAN_PROXY 环境变量）。
+ * 服务端 /api/douban* 路由借助它绕过 Cloudflare 边缘节点出口 IP 被豆瓣风控拦截的问题。
+ */
+export async function getDoubanProxy(): Promise<string> {
+  try {
+    const config = await getConfig();
+    return config.SiteConfig.DoubanProxy || '';
+  } catch {
+    return process.env.NEXT_PUBLIC_DOUBAN_PROXY || '';
+  }
+}
+
 export async function getAvailableApiSites(): Promise<ApiSite[]> {
   const config = await getConfig();
   return config.SourceConfig.filter((s) => !s.disabled).map((s) => ({
