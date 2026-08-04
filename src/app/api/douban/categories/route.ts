@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 
-import { getCacheTime } from '@/lib/config';
+import { getCacheTime, getDoubanProxy } from '@/lib/config';
 import { DoubanItem, DoubanResult } from '@/lib/types';
 
 interface DoubanCategoryApiResponse {
@@ -28,6 +28,11 @@ const DOUBAN_TIMEOUT_MS = 6000;
 async function fetchDoubanData(
   url: string
 ): Promise<DoubanCategoryApiResponse> {
+  // 若配置了豆瓣代理（后台设置 或 NEXT_PUBLIC_DOUBAN_PROXY），则通过代理请求，
+  // 绕过 Cloudflare 边缘节点出口 IP 被豆瓣风控拦截的问题（直连会从 CF 出口 IP 被拒）。
+  const proxy = await getDoubanProxy();
+  const finalUrl = proxy ? `${proxy}${encodeURIComponent(url)}` : url;
+
   // 添加超时控制
   const controller = new AbortController();
   const timeoutId = setTimeout(() => controller.abort(), DOUBAN_TIMEOUT_MS);
@@ -38,15 +43,15 @@ async function fetchDoubanData(
     headers: {
       'User-Agent':
         'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0 Safari/537.36',
-      Referer: 'https://movie.douban.com/',
+      // rexxar API 来自 m.douban.com，Referer 需与之匹配
+      Referer: 'https://m.douban.com/',
       Accept: 'application/json, text/plain, */*',
-      Origin: 'https://movie.douban.com',
     },
   };
 
   try {
-    // 尝试直接访问豆瓣API
-    const response = await fetch(url, fetchOptions);
+    // 尝试访问豆瓣API（或经代理）
+    const response = await fetch(finalUrl, fetchOptions);
     clearTimeout(timeoutId);
 
     if (!response.ok) {
