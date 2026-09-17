@@ -69,9 +69,24 @@ export function shouldUseDoubanClient(): boolean {
 }
 
 /**
- * 浏览器端豆瓣分类数据获取函数
+ * 触发全局错误提示
  */
-export async function fetchDoubanCategories(
+function emitGlobalError(message: string): void {
+  if (typeof window !== 'undefined') {
+    window.dispatchEvent(
+      new CustomEvent('globalError', {
+        detail: { message },
+      })
+    );
+  }
+}
+
+/**
+ * 【内核】浏览器端豆瓣分类数据获取，不做错误提示（供回退逻辑判断使用）
+ * 注意：豆瓣不返回 CORS 头，因此该函数必须经由代理（proxyUrl）才能成功；
+ * 若未配置代理或代理已失效，它一定会抛错 —— 调用方应回退到服务端 API。
+ */
+async function fetchDoubanCategoriesRaw(
   params: DoubanCategoriesParams
 ): Promise<DoubanResult> {
   const { kind, category, type, pageLimit = 20, pageStart = 0 } = params;
@@ -95,71 +110,90 @@ export async function fetchDoubanCategories(
 
   const target = `https://m.douban.com/rexxar/api/v2/subject/recent_hot/${kind}?start=${pageStart}&limit=${pageLimit}&category=${category}&type=${type}`;
 
+  const response = await fetchWithTimeout(target);
+
+  if (!response.ok) {
+    throw new Error(`HTTP error! Status: ${response.status}`);
+  }
+
+  const doubanData: DoubanCategoryApiResponse = await response.json();
+
+  // 转换数据格式
+  const list: DoubanItem[] = doubanData.items.map((item) => ({
+    id: item.id,
+    title: item.title,
+    poster: item.pic?.normal || item.pic?.large || '',
+    rate: item.rating?.value ? item.rating.value.toFixed(1) : '',
+    year: item.card_subtitle?.match(/(\d{4})/)?.[1] || '',
+  }));
+
+  return {
+    code: 200,
+    message: '获取成功',
+    list: list,
+  };
+}
+
+/**
+ * 浏览器端豆瓣分类数据获取函数（对外，含全局错误提示）
+ */
+export async function fetchDoubanCategories(
+  params: DoubanCategoriesParams
+): Promise<DoubanResult> {
   try {
-    const response = await fetchWithTimeout(target);
-
-    if (!response.ok) {
-      throw new Error(`HTTP error! Status: ${response.status}`);
-    }
-
-    const doubanData: DoubanCategoryApiResponse = await response.json();
-
-    // 转换数据格式
-    const list: DoubanItem[] = doubanData.items.map((item) => ({
-      id: item.id,
-      title: item.title,
-      poster: item.pic?.normal || item.pic?.large || '',
-      rate: item.rating?.value ? item.rating.value.toFixed(1) : '',
-      year: item.card_subtitle?.match(/(\d{4})/)?.[1] || '',
-    }));
-
-    return {
-      code: 200,
-      message: '获取成功',
-      list: list,
-    };
+    return await fetchDoubanCategoriesRaw(params);
   } catch (error) {
-    // 触发全局错误提示
-    if (typeof window !== 'undefined') {
-      window.dispatchEvent(
-        new CustomEvent('globalError', {
-          detail: { message: '获取豆瓣分类数据失败' },
-        })
-      );
-    }
+    emitGlobalError('获取豆瓣分类数据失败');
     throw new Error(`获取豆瓣分类数据失败: ${(error as Error).message}`);
   }
 }
 
 /**
- * 统一的豆瓣分类数据获取函数，根据代理设置选择使用服务端 API 或客户端代理获取
+ * 服务端 API 兜底：/api/douban/categories
+ */
+async function fetchDoubanCategoriesFromServer(
+  params: DoubanCategoriesParams
+): Promise<DoubanResult> {
+  const { kind, category, type, pageLimit = 20, pageStart = 0 } = params;
+  const response = await fetch(
+    `/api/douban/categories?kind=${kind}&category=${category}&type=${type}&limit=${pageLimit}&start=${pageStart}`
+  );
+
+  if (!response.ok) {
+    throw new Error('获取豆瓣分类数据失败');
+  }
+
+  return response.json();
+}
+
+/**
+ * 统一的豆瓣分类数据获取函数。
+ *
+ * 策略（自愈设计）：
+ *   1. 未配置代理 URL → 直接走服务端 API（推荐路径，服务端不受 CORS 限制）
+ *   2. 配置了代理 URL → 先尝试客户端代理获取；
+ *      一旦失败（代理失效 / 死链 / CORS），自动回退到服务端 API，
+ *      避免因为浏览器里残留的旧代理地址导致「豆瓣整块不可用」。
  */
 export async function getDoubanCategories(
   params: DoubanCategoriesParams
 ): Promise<DoubanResult> {
   if (shouldUseDoubanClient()) {
-    // 使用客户端代理获取（当设置了代理 URL 时）
-    return fetchDoubanCategories(params);
-  } else {
-    // 使用服务端 API（当没有设置代理 URL 时）
-    const { kind, category, type, pageLimit = 20, pageStart = 0 } = params;
-    const response = await fetch(
-      `/api/douban/categories?kind=${kind}&category=${category}&type=${type}&limit=${pageLimit}&start=${pageStart}`
-    );
-
-    if (!response.ok) {
-      // 触发全局错误提示
-      if (typeof window !== 'undefined') {
-        window.dispatchEvent(
-          new CustomEvent('globalError', {
-            detail: { message: '获取豆瓣分类数据失败' },
-          })
-        );
-      }
-      throw new Error('获取豆瓣分类数据失败');
+    try {
+      return await fetchDoubanCategoriesRaw(params);
+    } catch (clientError) {
+      console.warn(
+        '[douban] 客户端代理获取分类失败，已自动回退服务端 API：',
+        clientError
+      );
     }
+  }
 
-    return response.json();
+  try {
+    return await fetchDoubanCategoriesFromServer(params);
+  } catch (serverError) {
+    emitGlobalError('获取豆瓣分类数据失败');
+    throw serverError;
   }
 }
 
@@ -170,35 +204,10 @@ interface DoubanListParams {
   pageStart?: number;
 }
 
-export async function getDoubanList(
-  params: DoubanListParams
-): Promise<DoubanResult> {
-  const { tag, type, pageLimit = 20, pageStart = 0 } = params;
-  if (shouldUseDoubanClient()) {
-    // 使用客户端代理获取（当设置了代理 URL 时）
-    return fetchDoubanList(params);
-  } else {
-    const response = await fetch(
-      `/api/douban?tag=${tag}&type=${type}&pageSize=${pageLimit}&pageStart=${pageStart}`
-    );
-
-    if (!response.ok) {
-      // 触发全局错误提示
-      if (typeof window !== 'undefined') {
-        window.dispatchEvent(
-          new CustomEvent('globalError', {
-            detail: { message: '获取豆瓣列表数据失败' },
-          })
-        );
-      }
-      throw new Error('获取豆瓣列表数据失败');
-    }
-
-    return response.json();
-  }
-}
-
-export async function fetchDoubanList(
+/**
+ * 【内核】浏览器端豆瓣列表数据获取，不做错误提示
+ */
+async function fetchDoubanListRaw(
   params: DoubanListParams
 ): Promise<DoubanResult> {
   const { tag, type, pageLimit = 20, pageStart = 0 } = params;
@@ -222,38 +231,83 @@ export async function fetchDoubanList(
 
   const target = `https://movie.douban.com/j/search_subjects?type=${type}&tag=${tag}&sort=recommend&page_limit=${pageLimit}&page_start=${pageStart}`;
 
-  try {
-    const response = await fetchWithTimeout(target);
+  const response = await fetchWithTimeout(target);
 
-    if (!response.ok) {
-      throw new Error(`HTTP error! Status: ${response.status}`);
-    }
+  if (!response.ok) {
+    throw new Error(`HTTP error! Status: ${response.status}`);
+  }
 
-    const doubanData: DoubanCategoryApiResponse = await response.json();
+  const doubanData: DoubanCategoryApiResponse = await response.json();
 
-    // 转换数据格式
-    const list: DoubanItem[] = doubanData.items.map((item) => ({
-      id: item.id,
-      title: item.title,
-      poster: item.pic?.normal || item.pic?.large || '',
-      rate: item.rating?.value ? item.rating.value.toFixed(1) : '',
-      year: item.card_subtitle?.match(/(\d{4})/)?.[1] || '',
-    }));
+  // 转换数据格式
+  const list: DoubanItem[] = doubanData.items.map((item) => ({
+    id: item.id,
+    title: item.title,
+    poster: item.pic?.normal || item.pic?.large || '',
+    rate: item.rating?.value ? item.rating.value.toFixed(1) : '',
+    year: item.card_subtitle?.match(/(\d{4})/)?.[1] || '',
+  }));
 
-    return {
-      code: 200,
-      message: '获取成功',
-      list: list,
-    };
-  } catch (error) {
-    // 触发全局错误提示
-    if (typeof window !== 'undefined') {
-      window.dispatchEvent(
-        new CustomEvent('globalError', {
-          detail: { message: '获取豆瓣列表数据失败' },
-        })
+  return {
+    code: 200,
+    message: '获取成功',
+    list: list,
+  };
+}
+
+/**
+ * 服务端 API 兜底：/api/douban
+ */
+async function fetchDoubanListFromServer(
+  params: DoubanListParams
+): Promise<DoubanResult> {
+  const { tag, type, pageLimit = 20, pageStart = 0 } = params;
+  const response = await fetch(
+    `/api/douban?tag=${tag}&type=${type}&pageSize=${pageLimit}&pageStart=${pageStart}`
+  );
+
+  if (!response.ok) {
+    throw new Error('获取豆瓣列表数据失败');
+  }
+
+  return response.json();
+}
+
+/**
+ * 统一的豆瓣列表数据获取函数（同样带服务端自动回退）
+ */
+export async function getDoubanList(
+  params: DoubanListParams
+): Promise<DoubanResult> {
+  if (shouldUseDoubanClient()) {
+    try {
+      return await fetchDoubanListRaw(params);
+    } catch (clientError) {
+      console.warn(
+        '[douban] 客户端代理获取列表失败，已自动回退服务端 API：',
+        clientError
       );
     }
+  }
+
+  try {
+    return await fetchDoubanListFromServer(params);
+  } catch (serverError) {
+    emitGlobalError('获取豆瓣列表数据失败');
+    throw serverError;
+  }
+}
+
+/**
+ * 浏览器端豆瓣列表数据获取函数（对外，含全局错误提示）
+ */
+export async function fetchDoubanList(
+  params: DoubanListParams
+): Promise<DoubanResult> {
+  try {
+    return await fetchDoubanListRaw(params);
+  } catch (error) {
+    emitGlobalError('获取豆瓣列表数据失败');
     throw new Error(`获取豆瓣分类数据失败: ${(error as Error).message}`);
   }
 }
