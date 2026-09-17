@@ -28,7 +28,11 @@ function HomeClient() {
   const [hotMovies, setHotMovies] = useState<DoubanItem[]>([]);
   const [hotTvShows, setHotTvShows] = useState<DoubanItem[]>([]);
   const [hotVarietyShows, setHotVarietyShows] = useState<DoubanItem[]>([]);
-  const [loading, setLoading] = useState(true);
+  // 三个豆瓣板块各自维护加载态：某个分类失败时，其余板块照常显示，
+  // 不再因为一次请求失败让整块豆瓣区变空。
+  const [loadingMovies, setLoadingMovies] = useState(true);
+  const [loadingTvShows, setLoadingTvShows] = useState(true);
+  const [loadingVarietyShows, setLoadingVarietyShows] = useState(true);
   const { announcement } = useSite();
 
   const [showAnnouncement, setShowAnnouncement] = useState(false);
@@ -60,40 +64,39 @@ function HomeClient() {
   const [favoriteItems, setFavoriteItems] = useState<FavoriteItem[]>([]);
 
   useEffect(() => {
-    const fetchDoubanData = async () => {
+    // 三个分类独立加载：任一失败只影响自身板块，不再整体报错
+    const loadCategory = async (
+      params: { kind: 'movie' | 'tv'; category: string; type: string },
+      apply: (list: DoubanItem[]) => void,
+      done: (loading: boolean) => void
+    ) => {
       try {
-        setLoading(true);
-
-        // 并行获取热门电影、热门剧集和热门综艺
-        const [moviesData, tvShowsData, varietyShowsData] = await Promise.all([
-          getDoubanCategories({
-            kind: 'movie',
-            category: '热门',
-            type: '全部',
-          }),
-          getDoubanCategories({ kind: 'tv', category: 'tv', type: 'tv' }),
-          getDoubanCategories({ kind: 'tv', category: 'show', type: 'show' }),
-        ]);
-
-        if (moviesData.code === 200) {
-          setHotMovies(moviesData.list);
-        }
-
-        if (tvShowsData.code === 200) {
-          setHotTvShows(tvShowsData.list);
-        }
-
-        if (varietyShowsData.code === 200) {
-          setHotVarietyShows(varietyShowsData.list);
+        const data = await getDoubanCategories(params);
+        if (data.code === 200) {
+          apply(data.list);
         }
       } catch (error) {
         console.error('获取豆瓣数据失败:', error);
       } finally {
-        setLoading(false);
+        done(false);
       }
     };
 
-    fetchDoubanData();
+    loadCategory(
+      { kind: 'movie', category: '热门', type: '全部' },
+      setHotMovies,
+      setLoadingMovies
+    );
+    loadCategory(
+      { kind: 'tv', category: 'tv', type: 'tv' },
+      setHotTvShows,
+      setLoadingTvShows
+    );
+    loadCategory(
+      { kind: 'tv', category: 'show', type: 'show' },
+      setHotVarietyShows,
+      setLoadingVarietyShows
+    );
   }, []);
 
   // 处理收藏数据更新的函数
@@ -228,7 +231,7 @@ function HomeClient() {
                   </Link>
                 </div>
                 <ScrollableRow>
-                  {loading
+                  {loadingMovies
                     ? // 加载状态显示灰色占位数据
                       Array.from({ length: 8 }).map((_, index) => (
                         <div
@@ -276,7 +279,7 @@ function HomeClient() {
                   </Link>
                 </div>
                 <ScrollableRow>
-                  {loading
+                  {loadingTvShows
                     ? // 加载状态显示灰色占位数据
                       Array.from({ length: 8 }).map((_, index) => (
                         <div
@@ -323,7 +326,7 @@ function HomeClient() {
                   </Link>
                 </div>
                 <ScrollableRow>
-                  {loading
+                  {loadingVarietyShows
                     ? // 加载状态显示灰色占位数据
                       Array.from({ length: 8 }).map((_, index) => (
                         <div

@@ -1,6 +1,12 @@
 import { NextResponse } from 'next/server';
 
 import { getCacheTime, getDoubanProxy } from '@/lib/config';
+import {
+  STALE_TTL_SECONDS,
+  doubanCacheKey,
+  readDoubanCache,
+  writeDoubanCache,
+} from '@/lib/douban-cache';
 import { DoubanItem, DoubanResult } from '@/lib/types';
 
 interface DoubanApiResponse {
@@ -12,7 +18,16 @@ interface DoubanApiResponse {
   }>;
 }
 
-async function fetchDoubanData(url: string): Promise<DoubanApiResponse> {
+// 同 /api/douban/categories：豆瓣偶发限速会让单次请求超时，
+// 改为「最多 3 次尝试 + 超时逐次放宽」，并用边缘缓存兜底。
+const DOUBAN_ATTEMPTS = 3;
+const DOUBAN_BASE_TIMEOUT_MS = 6000;
+const DOUBAN_RETRY_DELAY_MS = 300;
+
+async function fetchDoubanDataOnce(
+  url: string,
+  timeoutMs: number
+): Promise<DoubanApiResponse> {
   // 若配置了豆瓣代理（后台设置 或 NEXT_PUBLIC_DOUBAN_PROXY），则通过代理请求，
   // 绕过 Cloudflare 边缘节点出口 IP 被豆瓣风控拦截的问题。
   const proxy = await getDoubanProxy();
@@ -20,7 +35,7 @@ async function fetchDoubanData(url: string): Promise<DoubanApiResponse> {
 
   // 添加超时控制
   const controller = new AbortController();
-  const timeoutId = setTimeout(() => controller.abort(), 10000); // 10秒超时
+  const timeoutId = setTimeout(() => controller.abort(), timeoutMs);
 
   // 设置请求选项，包括信号和头部
   const fetchOptions = {
@@ -36,20 +51,53 @@ async function fetchDoubanData(url: string): Promise<DoubanApiResponse> {
   try {
     // 尝试访问豆瓣API（或经代理）
     const response = await fetch(finalUrl, fetchOptions);
-    clearTimeout(timeoutId);
 
     if (!response.ok) {
       throw new Error(`HTTP error! Status: ${response.status}`);
     }
 
     return await response.json();
-  } catch (error) {
+  } finally {
     clearTimeout(timeoutId);
-    throw error;
   }
 }
 
+async function fetchDoubanData(url: string): Promise<DoubanApiResponse> {
+  let lastError: unknown = new Error('获取豆瓣数据失败');
+
+  for (let attempt = 1; attempt <= DOUBAN_ATTEMPTS; attempt++) {
+    try {
+      return await fetchDoubanDataOnce(
+        url,
+        DOUBAN_BASE_TIMEOUT_MS + (attempt - 1) * 2000
+      );
+    } catch (error) {
+      lastError = error;
+      if (attempt < DOUBAN_ATTEMPTS) {
+        await new Promise((resolve) =>
+          setTimeout(resolve, DOUBAN_RETRY_DELAY_MS * attempt)
+        );
+      }
+    }
+  }
+
+  throw lastError;
+}
+
 export const runtime = 'edge';
+
+function buildResponse(body: string, cacheTime: number, cacheState: string) {
+  return new NextResponse(body, {
+    status: 200,
+    headers: {
+      'Content-Type': 'application/json; charset=utf-8',
+      'Cache-Control': `public, max-age=${cacheTime}, s-maxage=${cacheTime}`,
+      'CDN-Cache-Control': `public, s-maxage=${cacheTime}`,
+      'Vercel-CDN-Cache-Control': `public, s-maxage=${cacheTime}`,
+      'X-Douban-Cache': cacheState,
+    },
+  });
+}
 
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
@@ -95,6 +143,16 @@ export async function GET(request: Request) {
 
   const target = `https://movie.douban.com/j/search_subjects?type=${type}&tag=${tag}&sort=recommend&page_limit=${pageSize}&page_start=${pageStart}`;
 
+  const cacheTime = await getCacheTime();
+  const freshKey = doubanCacheKey(request.url);
+  const staleKey = doubanCacheKey(request.url, true);
+
+  // 1) 命中新鲜缓存直接返回，不回源
+  const freshBody = await readDoubanCache(freshKey);
+  if (freshBody) {
+    return buildResponse(freshBody, cacheTime, 'HIT');
+  }
+
   try {
     // 调用豆瓣 API
     const doubanData = await fetchDoubanData(target);
@@ -114,15 +172,21 @@ export async function GET(request: Request) {
       list: list,
     };
 
-    const cacheTime = await getCacheTime();
-    return NextResponse.json(response, {
-      headers: {
-        'Cache-Control': `public, max-age=${cacheTime}, s-maxage=${cacheTime}`,
-        'CDN-Cache-Control': `public, s-maxage=${cacheTime}`,
-        'Vercel-CDN-Cache-Control': `public, s-maxage=${cacheTime}`,
-      },
-    });
+    const body = JSON.stringify(response);
+
+    await Promise.all([
+      writeDoubanCache(freshKey, body, cacheTime),
+      writeDoubanCache(staleKey, body, STALE_TTL_SECONDS),
+    ]);
+
+    return buildResponse(body, cacheTime, 'MISS');
   } catch (error) {
+    // 2) 回源失败：用陈旧缓存兜底
+    const staleBody = await readDoubanCache(staleKey);
+    if (staleBody) {
+      return buildResponse(staleBody, 60, 'STALE');
+    }
+
     return NextResponse.json(
       { error: '获取豆瓣数据失败', details: (error as Error).message },
       { status: 500 }
