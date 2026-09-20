@@ -1100,33 +1100,17 @@ export async function isFavorited(
     const cachedFavorites = cacheManager.getCachedFavorites();
 
     if (cachedFavorites) {
-      // 返回缓存数据，同时后台异步更新
-      fetchFromApi<Record<string, Favorite>>(`/api/favorites`)
-        .then((freshData) => {
-          // 只有数据真正不同时才更新缓存
-          if (JSON.stringify(cachedFavorites) !== JSON.stringify(freshData)) {
-            cacheManager.cacheFavorites(freshData);
-            // 触发数据更新事件
-            window.dispatchEvent(
-              new CustomEvent('favoritesUpdated', {
-                detail: freshData,
-              })
-            );
-          }
-        })
-        .catch((err) => {
-          console.warn('后台同步收藏失败:', err);
-          triggerGlobalError('后台同步收藏失败');
-        });
+      // 返回缓存数据，同时按需后台异步更新。
+      // 【性能】这里原本有一份与 getAllFavorites() 重复的、未去重未节流的后台 fetch；
+      // 而 VideoCard 实际调用的是 isFavorited() 而不是 getAllFavorites()，
+      // 所以每张卡片仍会各发一次请求。改为共用同一套去重 + 节流逻辑。
+      syncFavoritesInBackground(cachedFavorites);
 
       return !!cachedFavorites[key];
     } else {
-      // 缓存为空，直接从 API 获取并缓存
+      // 缓存为空，直接从 API 获取并缓存（并发调用已合并为 1 个请求）
       try {
-        const freshData = await fetchFromApi<Record<string, Favorite>>(
-          `/api/favorites`
-        );
-        cacheManager.cacheFavorites(freshData);
+        const freshData = await fetchFavoritesDeduped();
         return !!freshData[key];
       } catch (err) {
         console.error('检查收藏状态失败:', err);
