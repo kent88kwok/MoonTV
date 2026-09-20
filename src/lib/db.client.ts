@@ -96,6 +96,14 @@ const STORAGE_TYPE = (() => {
 // 搜索历史最大保存条数
 const SEARCH_HISTORY_LIMIT = 20;
 
+// ---------------- 收藏后台同步：in-flight 去重 + 节流 ----------------
+// 【性能】/api/favorites 原本会被每一张 VideoCard 各触发一次后台同步
+// （实测每页 13~15 次、墙钟累计 5~7 秒）。这里用模块级状态做合并：
+// 同一时刻只允许一个请求在飞，且 5 秒内不重复同步。
+const FAVORITES_SYNC_MIN_INTERVAL = 5000;
+let favoritesSyncInFlight: Promise<Record<string, Favorite>> | null = null;
+let favoritesLastSyncedAt = 0;
+
 // ---- 缓存管理器 ----
 class HybridCacheManager {
   private static instance: HybridCacheManager;
@@ -850,6 +858,68 @@ export async function deleteSearchHistory(keyword: string): Promise<void> {
 // ---------------- 收藏相关 API ----------------
 
 /**
+ * 后台同步收藏列表（带去重与节流）。
+ * - 已有请求在飞：直接复用，不再新开请求
+ * - 距上次同步不足 FAVORITES_SYNC_MIN_INTERVAL：跳过本次同步
+ * 仅当数据真正变化时才写缓存并派发 favoritesUpdated 事件。
+ */
+function syncFavoritesInBackground(
+  cachedData: Record<string, Favorite>
+): void {
+  if (favoritesSyncInFlight) return;
+  if (Date.now() - favoritesLastSyncedAt < FAVORITES_SYNC_MIN_INTERVAL) return;
+
+  favoritesSyncInFlight = fetchFromApi<Record<string, Favorite>>(
+    `/api/favorites`
+  )
+    .then((freshData) => {
+      favoritesLastSyncedAt = Date.now();
+      // 只有数据真正不同时才更新缓存
+      if (JSON.stringify(cachedData) !== JSON.stringify(freshData)) {
+        cacheManager.cacheFavorites(freshData);
+        // 触发数据更新事件
+        window.dispatchEvent(
+          new CustomEvent('favoritesUpdated', {
+            detail: freshData,
+          })
+        );
+      }
+      return freshData;
+    })
+    .catch((err) => {
+      favoritesLastSyncedAt = Date.now();
+      console.warn('后台同步收藏失败:', err);
+      triggerGlobalError('后台同步收藏失败');
+      return cachedData;
+    })
+    .finally(() => {
+      favoritesSyncInFlight = null;
+    });
+}
+
+/**
+ * 缓存为空时获取收藏，并合并同一时刻的并发调用。
+ * 多张卡片同时发现缓存为空时，只会产生 1 个请求。
+ */
+function fetchFavoritesDeduped(): Promise<Record<string, Favorite>> {
+  const existing = favoritesSyncInFlight;
+  if (existing) return existing;
+
+  const started = fetchFromApi<Record<string, Favorite>>(`/api/favorites`)
+    .then((freshData) => {
+      favoritesLastSyncedAt = Date.now();
+      cacheManager.cacheFavorites(freshData);
+      return freshData;
+    })
+    .finally(() => {
+      favoritesSyncInFlight = null;
+    });
+
+  favoritesSyncInFlight = started;
+  return started;
+}
+
+/**
  * 获取全部收藏。
  * 数据库存储模式下使用混合缓存策略：优先返回缓存数据，后台异步同步最新数据。
  */
@@ -865,34 +935,13 @@ export async function getAllFavorites(): Promise<Record<string, Favorite>> {
     const cachedData = cacheManager.getCachedFavorites();
 
     if (cachedData) {
-      // 返回缓存数据，同时后台异步更新
-      fetchFromApi<Record<string, Favorite>>(`/api/favorites`)
-        .then((freshData) => {
-          // 只有数据真正不同时才更新缓存
-          if (JSON.stringify(cachedData) !== JSON.stringify(freshData)) {
-            cacheManager.cacheFavorites(freshData);
-            // 触发数据更新事件
-            window.dispatchEvent(
-              new CustomEvent('favoritesUpdated', {
-                detail: freshData,
-              })
-            );
-          }
-        })
-        .catch((err) => {
-          console.warn('后台同步收藏失败:', err);
-          triggerGlobalError('后台同步收藏失败');
-        });
-
+      // 返回缓存数据，同时按需后台异步更新（已去重 + 节流）
+      syncFavoritesInBackground(cachedData);
       return cachedData;
     } else {
-      // 缓存为空，直接从 API 获取并缓存
+      // 缓存为空，直接从 API 获取并缓存（并发调用已合并）
       try {
-        const freshData = await fetchFromApi<Record<string, Favorite>>(
-          `/api/favorites`
-        );
-        cacheManager.cacheFavorites(freshData);
-        return freshData;
+        return await fetchFavoritesDeduped();
       } catch (err) {
         console.error('获取收藏失败:', err);
         triggerGlobalError('获取收藏失败');

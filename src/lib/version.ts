@@ -12,16 +12,54 @@ export enum UpdateStatus {
 }
 
 // 远程版本检查URL配置
+// 【修复 + 性能】原配置为 ghfast.top 镜像 + senshinya/MoonTV，实测两者均已 404
+// （镜像失效、上游仓库改名），导致版本检查从未成功过，且每次都要白发请求。
+// 现改为：主要 = fork 上游 samqin123/MoonTV（用于判断上游是否发布新版），
+//         备用 = 自己的 fork kent88kwok/MoonTV（实测 200，响应最快）。
 const VERSION_CHECK_URLS = [
-  'https://ghfast.top/raw.githubusercontent.com/senshinya/MoonTV/main/VERSION.txt',
-  'https://raw.githubusercontent.com/senshinya/MoonTV/main/VERSION.txt',
+  'https://raw.githubusercontent.com/samqin123/MoonTV/main/VERSION.txt',
+  'https://raw.githubusercontent.com/kent88kwok/MoonTV/main/VERSION.txt',
 ];
 
+// 【性能】PageLayout 会同时挂载两个 UserMenu（移动端头部一个、桌面端一个），
+// 两者都在挂载时调用 checkForUpdates，原本每页要发 4 个请求、最坏挂起 10 秒。
+// 这里用「模块级单例 + 结果记忆」去重：并发调用复用同一个请求，
+// 拿到确定结果后在同一会话内直接复用，不再重复请求。
+let versionCheckInFlight: Promise<UpdateStatus> | null = null;
+let versionCheckResult: UpdateStatus | null = null;
+
 /**
- * 检查是否有新版本可用
+ * 检查是否有新版本可用。
+ * 并发调用会复用同一个请求；拿到确定结果后直接返回缓存，不重复请求。
  * @returns Promise<UpdateStatus> - 返回版本检查状态
  */
-export async function checkForUpdates(): Promise<UpdateStatus> {
+export function checkForUpdates(): Promise<UpdateStatus> {
+  // 已有确定结果，直接复用
+  if (versionCheckResult !== null) {
+    return Promise.resolve(versionCheckResult);
+  }
+
+  // 已有请求在飞，复用它
+  if (versionCheckInFlight) {
+    return versionCheckInFlight;
+  }
+
+  versionCheckInFlight = doCheckForUpdates()
+    .then((status) => {
+      // 只记忆确定结果；「获取失败」不缓存，便于下次重试
+      if (status !== UpdateStatus.FETCH_FAILED) {
+        versionCheckResult = status;
+      }
+      return status;
+    })
+    .finally(() => {
+      versionCheckInFlight = null;
+    });
+
+  return versionCheckInFlight;
+}
+
+async function doCheckForUpdates(): Promise<UpdateStatus> {
   try {
     // 尝试从主要URL获取版本信息
     const primaryVersion = await fetchVersionFromUrl(VERSION_CHECK_URLS[0]);
@@ -51,7 +89,7 @@ export async function checkForUpdates(): Promise<UpdateStatus> {
 async function fetchVersionFromUrl(url: string): Promise<string | null> {
   try {
     const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 5000); // 5秒超时
+    const timeoutId = setTimeout(() => controller.abort(), 2500); // 2.5秒超时（版本检查不该拖慢页面）
 
     const response = await fetch(url, {
       method: 'GET',

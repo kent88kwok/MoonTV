@@ -32,6 +32,7 @@ const Logo = () => {
   return (
     <Link
       href='/'
+      prefetch={false}
       className='flex items-center justify-center h-16 select-none hover:opacity-80 transition-opacity duration-200'
     >
       <span className='text-2xl font-bold text-green-600 tracking-tight'>
@@ -196,6 +197,7 @@ const Sidebar = ({ onToggle, activePath = '/' }: SidebarProps) => {
             <nav className='px-2 mt-4 space-y-1'>
               <Link
                 href='/'
+                prefetch={false}
                 onClick={() => setActive('/')}
                 data-active={active === '/'}
                 className={`group flex items-center rounded-lg px-2 py-2 pl-4 text-gray-700 hover:bg-gray-100/30 hover:text-green-600 data-[active=true]:bg-green-500/20 data-[active=true]:text-green-700 font-medium transition-colors duration-200 min-h-[40px] dark:text-gray-300 dark:hover:text-green-400 dark:data-[active=true]:bg-green-500/10 dark:data-[active=true]:text-green-400 ${
@@ -213,6 +215,7 @@ const Sidebar = ({ onToggle, activePath = '/' }: SidebarProps) => {
               </Link>
               <Link
                 href='/search'
+                prefetch={false}
                 onClick={(e) => {
                   e.preventDefault();
                   handleSearchClick();
@@ -254,6 +257,7 @@ const Sidebar = ({ onToggle, activePath = '/' }: SidebarProps) => {
                     <Link
                       key={item.label}
                       href={item.href}
+                      prefetch={false}
                       onClick={() => setActive(item.href)}
                       data-active={isActive}
                       className={`group flex items-center rounded-lg px-2 py-2 pl-4 text-sm text-gray-700 hover:bg-gray-100/30 hover:text-green-600 data-[active=true]:bg-green-500/20 data-[active=true]:text-green-700 transition-colors duration-200 min-h-[40px] dark:text-gray-300 dark:hover:text-green-400 dark:data-[active=true]:bg-green-500/10 dark:data-[active=true]:text-green-400 ${

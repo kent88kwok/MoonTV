@@ -1,7 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any,no-console */
 
-import Hls from 'hls.js';
-
 /**
  * 获取图片代理 URL 设置
  */
@@ -100,6 +98,11 @@ export async function getVideoResolutionFromM3u8(m3u8Url: string): Promise<{
   pingTime: number; // 网络延迟（毫秒）
 }> {
   try {
+    // 【性能】hls.js 体积很大（未压缩约 488KB / brotli 约 148KB）。原先在文件顶部静态
+    // import 会顺着 utils.ts 的引用链被打进所有页面共用的 chunk，导致首页、搜索页、
+    // 豆瓣页都要白下载一遍。这里改成按需动态 import，只有真正解析 m3u8 时才加载。
+    const { default: Hls } = await import('hls.js');
+
     // 直接使用m3u8 URL作为视频源，避免CORS问题
     return new Promise((resolve, reject) => {
       const video = document.createElement('video');

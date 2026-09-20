@@ -32,6 +32,7 @@ const MobileHeader = ({ showBackButton = false }: MobileHeaderProps) => {
       <div className='absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2'>
         <Link
           href='/'
+          prefetch={false}
           className='text-2xl font-bold text-green-600 tracking-tight hover:opacity-80 transition-opacity'
         >
           {siteName}
