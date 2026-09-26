@@ -1,6 +1,25 @@
 /* eslint-disable @typescript-eslint/no-explicit-any,no-console */
 
 /**
+ * 站内图片代理地址前缀，对应 src/app/api/image-proxy/route.ts。
+ * 该路由会补上豆瓣要求的 Referer 与 UA 后再取图，并带半年 CDN 缓存；
+ * 浏览器直连豆瓣图片域名会被判定为盗链，返回 418/403（封面图整片空白的根因）。
+ */
+const BUILTIN_IMAGE_PROXY = '/api/image-proxy?url=';
+
+/** 豆瓣图片域名（img1/img2/img3/img9.doubanio.com 等） */
+const DOUBAN_IMAGE_HOST_RE = /(^|\.)doubanio\.com$/i;
+
+/** 是否为豆瓣图片地址（相对地址、非法地址一律返回 false） */
+function isDoubanImageUrl(url: string): boolean {
+  try {
+    return DOUBAN_IMAGE_HOST_RE.test(new URL(url).hostname);
+  } catch {
+    return false;
+  }
+}
+
+/**
  * 获取图片代理 URL 设置
  */
 export function getImageProxyUrl(): string | null {
@@ -27,15 +46,31 @@ export function getImageProxyUrl(): string | null {
 }
 
 /**
- * 处理图片 URL，如果设置了图片代理则使用代理
+ * 处理图片 URL。
+ *
+ * 优先级：
+ *   1. 已由站内代理处理过的地址直接返回，避免二次包装
+ *   2. 显式配置了图片代理（localStorage.imageProxyUrl 或 NEXT_PUBLIC_IMAGE_PROXY）→ 全部走该代理
+ *   3. 未配置代理时的兜底：
+ *      a) 豆瓣图片：源站校验 Referer，直连必然 418/403，统一走站内 /api/image-proxy
+ *      b) http:// 图片：在 https 站点下会被浏览器按混合内容拦截，一并走站内代理
+ *   4. 其余图片保持原地址，不做无谓转发
  */
 export function processImageUrl(originalUrl: string): string {
   if (!originalUrl) return originalUrl;
 
-  const proxyUrl = getImageProxyUrl();
-  if (!proxyUrl) return originalUrl;
+  if (originalUrl.startsWith(BUILTIN_IMAGE_PROXY)) return originalUrl;
 
-  return `${proxyUrl}${encodeURIComponent(originalUrl)}`;
+  const proxyUrl = getImageProxyUrl();
+  if (proxyUrl) {
+    return `${proxyUrl}${encodeURIComponent(originalUrl)}`;
+  }
+
+  if (isDoubanImageUrl(originalUrl) || originalUrl.startsWith('http://')) {
+    return `${BUILTIN_IMAGE_PROXY}${encodeURIComponent(originalUrl)}`;
+  }
+
+  return originalUrl;
 }
 
 /**
