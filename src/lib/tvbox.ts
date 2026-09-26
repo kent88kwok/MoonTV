@@ -24,6 +24,24 @@ const MAX_RESULTS = 300;
 // 豆瓣图源校验 Referer，直连 img*.doubanio.com 会被判盗链返回 418/403。
 const DOUBAN_IMAGE_HOST_RE = /(^|\.)doubanio\.com$/i;
 
+// TVBox 启动时会先加载插件 jar（spider）。配置里缺这个字段时，多数客户端
+// 会去加载空地址并提示「jar 加载失败」，界面就停在那儿进不去。
+// 这里指向 CatVodSpider 的通用 jar（内含 classes.dex，Android 专用）。
+const SPIDER_JAR_SOURCES = [
+  'https://raw.githubusercontent.com/FongMi/CatVodSpider/main/jar/custom_spider.jar',
+  // GitHub raw 在部分网络下直连 403/超时，以下为国内可用的反代镜像。
+  'https://ghproxy.net/https://raw.githubusercontent.com/FongMi/CatVodSpider/main/jar/custom_spider.jar',
+  'https://gh-proxy.com/raw.githubusercontent.com/FongMi/CatVodSpider/main/jar/custom_spider.jar',
+];
+
+const SPIDER_JAR_UA =
+  'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0 Safari/537.36';
+
+// jar 内容几乎不变，边缘缓存 7 天，避免每台设备每次启动都回源。
+const SPIDER_JAR_TTL = 604800;
+
+const SPIDER_JAR_CACHE_KEY = 'https://tvbox.internal/spider.jar';
+
 // 可直连播放的媒体地址特征。部分采集站返回的是「分享页/跳转页」而非直链，
 // 这类地址交给 TVBox 会播放失败，需要剔除后走站内解析兜底。
 const PLAYABLE_URL_RE = /\.(m3u8|mp4|flv|mkv|ts|mov|avi|m4v)(\?|&|#|$)/i;
@@ -408,9 +426,89 @@ export async function getAggregatedDetail(
   return toCmsItem(fallback, ctx, true);
 }
 
+/** 取 Cloudflare 边缘缓存；本地 dev 等环境无 Cache API 时降级为不回源缓存。 */
+function getEdgeCache(): Cache | null {
+  try {
+    const store = (globalThis as { caches?: { default?: Cache } }).caches;
+    return store?.default ?? null;
+  } catch {
+    return null;
+  }
+}
+
+/**
+ * 转发 TVBox 插件 jar。
+ *
+ * 让 TVBox 只连本站：国内直连 GitHub raw 常被拦，而本站域名可达。
+ * 取回后校验 zip 魔数（PK），避免把上游错误页当成 jar 发出去——
+ * 那种情况在客户端同样表现为「jar 加载失败」，且极难排查。
+ */
+export async function serveSpiderJar(): Promise<Response> {
+  const cache = getEdgeCache();
+  const cacheKey = new Request(SPIDER_JAR_CACHE_KEY);
+
+  try {
+    const cached = await cache?.match(cacheKey);
+    if (cached) {
+      return cached;
+    }
+  } catch {
+    // 缓存不可用不影响主流程
+  }
+
+  const failures: string[] = [];
+  for (const source of SPIDER_JAR_SOURCES) {
+    try {
+      const upstream = await fetch(source, {
+        headers: { 'User-Agent': SPIDER_JAR_UA },
+      });
+      if (!upstream.ok) {
+        failures.push(`${source} → HTTP ${upstream.status}`);
+        continue;
+      }
+
+      const buffer = await upstream.arrayBuffer();
+      const bytes = new Uint8Array(buffer);
+      if (bytes.length < 4 || bytes[0] !== 0x50 || bytes[1] !== 0x4b) {
+        failures.push(`${source} → 非 jar 内容（${bytes.length}B）`);
+        continue;
+      }
+
+      const headers: Record<string, string> = {
+        'Content-Type': 'application/java-archive',
+        'Content-Length': String(bytes.length),
+        'Cache-Control': `public, max-age=${SPIDER_JAR_TTL}, s-maxage=${SPIDER_JAR_TTL}`,
+        'CDN-Cache-Control': `public, s-maxage=${SPIDER_JAR_TTL}`,
+      };
+
+      try {
+        await cache?.put(
+          cacheKey,
+          new Response(buffer, { status: 200, headers })
+        );
+      } catch {
+        // 写缓存失败不影响本次响应
+      }
+
+      return new Response(buffer, { status: 200, headers });
+    } catch (error) {
+      failures.push(`${source} → ${(error as Error).message}`);
+    }
+  }
+
+  console.error('TVBox 插件 jar 获取失败:', failures.join('; '));
+  return NextResponse.json(
+    { error: '插件 jar 获取失败', sources: failures },
+    { status: 502, headers: JSON_HEADERS }
+  );
+}
+
 /** TVBox 订阅配置：只暴露一个「MoonTV 聚合」源 */
 export function buildSubscription(origin: string, token: string) {
   return {
+    // 缺 spider 字段时 TVBox 会报「jar 加载失败」。指向本站代理，
+    // 客户端只需能连上本站域名即可拿到 jar。
+    spider: `${origin}/api/tvbox/spider.jar`,
     sites: [
       {
         key: 'moontv',
@@ -428,6 +526,7 @@ export function buildSubscription(origin: string, token: string) {
     ],
     parses: [],
     lives: [],
+    rules: [],
     ads: [],
   };
 }
