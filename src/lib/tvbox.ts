@@ -15,6 +15,15 @@ const MAX_CONCURRENCY = 6;
 // 单站兜底超时：死站/慢站不能拖垮整个 TVBox 请求。
 const PER_SITE_TIMEOUT_MS = 20000;
 
+// 分类映射（30 个源的 ?ac=list）整体预算。并发上限是 6，30 个源最少 5 轮，
+// 若碰上若干死站、每轮都吃满单站超时，最坏能拖到上百秒 —— 客户端早已超时，
+// 表现为"点进分类一直转圈/空白"。这里给一个硬上限：到点就用手上已收集到的源，
+// 放弃还没回来的（下个 6 小时周期再补），保证请求时长可预测。
+const CATEGORY_MAP_BUDGET_MS = 10000;
+
+// 拉单个源分类列表的超时上限（比通用单站超时短：分类列表只有几 KB）。
+const CLASS_LIST_TIMEOUT_MS = 8000;
+
 // 源 key 与视频 ID 的分隔符。两边的字符集都是 [\w-]，不会与 @@ 冲突。
 const ID_SEP = '@@';
 
@@ -573,11 +582,14 @@ interface SourceClass {
 }
 
 /** 拉取单个采集站的分类列表（苹果 CMS `?ac=list`） */
-async function fetchSourceClasses(apiSite: ApiSite): Promise<SourceClass[]> {
+async function fetchSourceClasses(
+  apiSite: ApiSite,
+  timeoutMs: number = CLASS_LIST_TIMEOUT_MS
+): Promise<SourceClass[]> {
   const sep = apiSite.api.includes('?') ? '&' : '?';
   const url = `${apiSite.api}${sep}ac=list`;
   const controller = new AbortController();
-  const timeoutId = setTimeout(() => controller.abort(), PER_SITE_TIMEOUT_MS);
+  const timeoutId = setTimeout(() => controller.abort(), timeoutMs);
 
   try {
     const response = await fetch(url, {
@@ -612,8 +624,11 @@ async function fetchSourceClasses(apiSite: ApiSite): Promise<SourceClass[]> {
   }
 }
 
-/** 标准分类 → 各采集站对应的候选分类 ID（采集站常需多个候选，见 buildCategoryMap） */
-type CategoryMap = Record<string, { site: string; typeIds: string[] }[]>;
+/** 某个采集站对某个标准分类的映射：候选分类 ID 可能多个，见 buildCategoryMap */
+type CategoryEntry = { site: string; typeIds: string[] };
+
+/** 标准分类 → 各采集站对应的候选分类 ID */
+type CategoryMap = Record<string, CategoryEntry[]>;
 
 let categoryMapMemo: { at: number; value: CategoryMap } | null = null;
 
@@ -635,10 +650,25 @@ async function buildCategoryMap(): Promise<CategoryMap> {
   const apiSites = (config.SourceConfig || []).filter((site) => !site.disabled);
   const filterAdult = !config.SiteConfig?.DisableYellowFilter;
 
+  const deadline = Date.now() + CATEGORY_MAP_BUDGET_MS;
+
   const perSite = await mapWithConcurrency(
     apiSites,
     MAX_CONCURRENCY,
-    async (site) => ({ site, classes: await fetchSourceClasses(site) })
+    async (site) => {
+      const remaining = deadline - Date.now();
+      if (remaining <= 0) {
+        // 预算用尽：放掉这个源，用已收集到的部分建映射（不阻塞用户请求）。
+        return { site, classes: [] as SourceClass[] };
+      }
+      return {
+        site,
+        classes: await fetchSourceClasses(
+          site,
+          Math.min(remaining, CLASS_LIST_TIMEOUT_MS)
+        ),
+      };
+    }
   );
 
   const map: CategoryMap = {};
@@ -883,17 +913,33 @@ export async function getCategoryList(
     return empty;
   }
 
-  const map = await getCategoryMap();
-  const entries = (map[categoryKey] || []).slice(0, MAX_SITES_PER_CATEGORY);
+  const config = await getConfig();
+  const filterAdult = !config.SiteConfig?.DisableYellowFilter;
+  const apiSites = (config.SourceConfig || []).filter((site) => !site.disabled);
+  const siteByKey = new Map(apiSites.map((site) => [site.key, site]));
+
+  // 分类映射只影响「精确度」，不该影响「有没有内容」。
+  // 映射构建失败（边缘超时、子请求受限等）或该分类在映射里为空时，
+  // 退化为「全站最新 + 按条目分类名本地过滤」——内容依然正确，只是单页稀疏些，
+  // 而不是让用户点进去看到一片空白。
+  let entries: CategoryEntry[] = [];
+  try {
+    const map = await getCategoryMap();
+    entries = (map[categoryKey] || []).slice(0, MAX_SITES_PER_CATEGORY);
+  } catch (error) {
+    console.warn(
+      'TVBox 分类映射构建失败，退化为全站过滤:',
+      (error as Error).message
+    );
+  }
+  if (entries.length === 0) {
+    entries = apiSites
+      .slice(0, MAX_SITES_PER_CATEGORY)
+      .map((site) => ({ site: site.key, typeIds: [] }));
+  }
   if (entries.length === 0) {
     return empty;
   }
-
-  const config = await getConfig();
-  const filterAdult = !config.SiteConfig?.DisableYellowFilter;
-  const siteByKey = new Map(
-    (config.SourceConfig || []).map((site) => [site.key, site])
-  );
 
   const pageMemoKey = `${categoryKey}:${page}`;
   const memo = categoryPageMemo.get(pageMemoKey);
@@ -1163,6 +1209,8 @@ export async function handleCmsRequest(
       const item = await getAggregatedDetail(singleId, ctx);
       return NextResponse.json(
         {
+          code: 1,
+          msg: '数据列表',
           list: item ? [item] : [],
           page: 1,
           pagecount: 1,
@@ -1174,7 +1222,15 @@ export async function handleCmsRequest(
     } catch (error) {
       console.warn('TVBox 详情获取失败:', (error as Error).message);
       return NextResponse.json(
-        { list: [], page: 1, pagecount: 1, limit: 0, total: 0 },
+        {
+          code: 1,
+          msg: '数据列表',
+          list: [],
+          page: 1,
+          pagecount: 1,
+          limit: 0,
+          total: 0,
+        },
         { headers: JSON_HEADERS }
       );
     }
@@ -1185,6 +1241,8 @@ export async function handleCmsRequest(
       const list = await searchAggregated(keyword, ctx);
       return NextResponse.json(
         {
+          code: 1,
+          msg: '数据列表',
           list,
           page: 1,
           pagecount: 1,
@@ -1196,7 +1254,15 @@ export async function handleCmsRequest(
     } catch (error) {
       console.warn('TVBox 聚合搜索失败:', (error as Error).message);
       return NextResponse.json(
-        { list: [], page: 1, pagecount: 1, limit: 0, total: 0 },
+        {
+          code: 1,
+          msg: '数据列表',
+          list: [],
+          page: 1,
+          pagecount: 1,
+          limit: 0,
+          total: 0,
+        },
         { headers: JSON_HEADERS }
       );
     }
@@ -1207,39 +1273,67 @@ export async function handleCmsRequest(
     try {
       const result = await getCategoryList(categoryKey, page, ctx);
       return NextResponse.json(
-        { ...result, limit: result.list.length },
+        {
+          code: 1,
+          msg: '数据列表',
+          ...result,
+          limit: result.list.length,
+        },
         { headers: JSON_HEADERS }
       );
     } catch (error) {
       console.warn('TVBox 分类浏览失败:', (error as Error).message);
       return NextResponse.json(
-        { class: [], list: [], page, pagecount: 0, limit: 0, total: 0 },
+        {
+          code: 1,
+          msg: '数据列表',
+          class: [],
+          list: [],
+          page,
+          pagecount: 0,
+          limit: 0,
+          total: 0,
+        },
         { headers: JSON_HEADERS }
       );
     }
   }
 
+  // 分类列表：恒定返回静态的 6 个标准分类，**不做任何上游请求**。
+  //
+  // 这一条是 TVBox 首页标签栏的唯一来源（客户端启动时对 api 地址发一次裸 GET，
+  // 或带 ?ac=list），所以它必须"永远成功、永远够快"。
+  //
+  // 早期实现把它挂在 getCategoryMap() 上：要先并发拉 30 个采集站的 ?ac=list
+  // （约 5 秒、30 个子请求）映射出各站分类，一旦这次构建超时或失败，
+  // class 就是空数组 —— 客户端表现为「完全没有分类菜单」，且重新导入也不恢复。
+  // 映射只对"点进某个分类之后"才有用，不该挡在入口上，故推迟到那时按需构建。
+  //
+  // 响应必须带上 code/msg：苹果 CMS 的标准 ac=list 是
+  // {code,msg,page,pagecount,limit,total,class,list}，而 FongMi 系客户端
+  // （影视仓 / OK影视等）会先看 code 是否为 1，缺字段就直接当失败处理，
+  // 连 class 都不会去读 —— 表现同样是"没有分类菜单"。
   if (ac === 'list' || ac === '') {
-    try {
-      const map = await getCategoryMap();
-      const classList = STANDARD_CATEGORIES.filter(
-        (category) => (map[category.key] || []).length > 0
-      ).map((category) => ({
-        type_id: category.key,
-        type_name: category.name,
-      }));
-      return NextResponse.json(
-        { class: classList, list: [] },
-        { headers: JSON_HEADERS }
-      );
-    } catch (error) {
-      console.warn('TVBox 分类列表获取失败:', (error as Error).message);
-      return NextResponse.json(
-        { class: [], list: [] },
-        { headers: JSON_HEADERS }
-      );
-    }
+    return NextResponse.json(
+      {
+        code: 1,
+        msg: '数据列表',
+        page: 1,
+        pagecount: 1,
+        limit: 0,
+        total: 0,
+        class: STANDARD_CATEGORIES.map((category) => ({
+          type_id: category.key,
+          type_name: category.name,
+        })),
+        list: [],
+      },
+      { headers: JSON_HEADERS }
+    );
   }
 
-  return NextResponse.json({ class: [], list: [] }, { headers: JSON_HEADERS });
+  return NextResponse.json(
+    { code: 1, msg: '数据列表', class: [], list: [] },
+    { headers: JSON_HEADERS }
+  );
 }
