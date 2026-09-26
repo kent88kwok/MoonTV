@@ -42,6 +42,74 @@ const SPIDER_JAR_TTL = 604800;
 
 const SPIDER_JAR_CACHE_KEY = 'https://tvbox.internal/spider.jar';
 
+/** 分类映射缓存时长（秒）。采集站分类极少变动，6 小时足够。 */
+const CATEGORY_MAP_TTL = 21600;
+
+/** 分类浏览结果的内存缓存时长（秒）。 */
+const CATEGORY_PAGE_TTL = 300;
+
+/** 每个标准分类最多查询的源数量：兼顾覆盖度与边缘子请求配额。 */
+const MAX_SITES_PER_CATEGORY = 12;
+
+/** 分类浏览单页结果上限，避免列表过长导致客户端滚动卡顿。 */
+const MAX_CATEGORY_RESULTS = 180;
+
+/** 分类浏览最大页码，防止客户端传入超大页码把上游打爆。 */
+const MAX_CATEGORY_PAGE = 500;
+
+/** 顶层分类命中成人特征词的比例超过该值即判定为纯成人采集站，整站跳过。 */
+const ADULT_SOURCE_HITS_RATIO = 0.3;
+
+/**
+ * 成人内容特征词。站内 yellowWords 只覆盖 20 个词，而采集站常用
+ * 「制服丝袜 / 群交淫乱 / 欧美性爱」这类词表外的写法，这里做补充判定。
+ * 仅在分类聚合时使用，不改变站内原有的过滤行为。
+ */
+const EXTRA_ADULT_WORDS = [
+  '色情',
+  '情色',
+  '情欲',
+  '伦理',
+  '三级',
+  '成人',
+  '18禁',
+  '无码',
+  '有码',
+  '淫',
+  '乱伦',
+  '群交',
+  '人兽',
+  '性爱',
+  '做爱',
+  '裸',
+  '偷拍',
+  '盗摄',
+  '自拍',
+  '走光',
+  '美乳',
+  '巨乳',
+  '人妻',
+  '熟女',
+  '少妇',
+  '丝袜',
+  '制服',
+  '调教',
+  'sm',
+  '黑料',
+  '换脸',
+  '艳照',
+  '写真',
+  '福利',
+  '麻豆',
+  '天美',
+  '蜜桃',
+  '精东',
+  'swag',
+  '91',
+  '主播',
+  '成人动漫',
+];
+
 // 可直连播放的媒体地址特征。部分采集站返回的是「分享页/跳转页」而非直链，
 // 这类地址交给 TVBox 会播放失败，需要剔除后走站内解析兜底。
 const PLAYABLE_URL_RE = /\.(m3u8|mp4|flv|mkv|ts|mov|avi|m4v)(\?|&|#|$)/i;
@@ -426,6 +494,476 @@ export async function getAggregatedDetail(
   return toCmsItem(fallback, ctx, true);
 }
 
+/* ------------------------------------------------------------------ *
+ * 分类聚合
+ *
+ * 30 个采集站各有一套分类体系（有的叫「电影片」，有的叫「电影」，
+ * 有的把「电视剧」排在 type_id=1、有的排 2），无法直接透传给 TVBox。
+ * 这里把它们归一到一组标准分类，浏览时再映射回各站自己的分类 ID。
+ * ------------------------------------------------------------------ */
+
+interface StandardCategory {
+  key: string;
+  name: string;
+}
+
+/** 对外暴露的标准分类（顺序即 TVBox 里分类标签的显示顺序） */
+const STANDARD_CATEGORIES: StandardCategory[] = [
+  { key: 'movie', name: '电影' },
+  { key: 'tv', name: '电视剧' },
+  { key: 'anime', name: '动漫' },
+  { key: 'variety', name: '综艺' },
+  { key: 'documentary', name: '纪录片' },
+  { key: 'kids', name: '少儿' },
+];
+
+const STANDARD_CATEGORY_KEYS = new Set(STANDARD_CATEGORIES.map((c) => c.key));
+
+/**
+ * 把采集站的分类名归一到标准分类。
+ *
+ * 判定顺序即优先级，几处关键取舍：
+ * - 「动漫片 / 综艺片」必须先于「X片」判定，否则会被「片」结尾误判成电影；
+ * - 「剧情片 / 动作片」等电影子类以「片」结尾，需先于含「剧」的规则判定，
+ *   否则会被当成电视剧；
+ * - 「连续剧 / 港剧 / 韩剧」等无「片」结尾，落到电视剧。
+ */
+function categorizeTypeName(typeName: string): string | null {
+  const name = (typeName || '').trim();
+  if (!name) {
+    return null;
+  }
+  if (/(动漫|动画|番剧|国漫|日漫|漫画)/.test(name)) {
+    return 'anime';
+  }
+  if (/(少儿|儿童|亲子|儿歌|益智|幼儿)/.test(name)) {
+    return 'kids';
+  }
+  if (/(纪录|记录)/.test(name)) {
+    return 'documentary';
+  }
+  if (/(综艺|真人秀|脱口秀|访谈|晚会)/.test(name)) {
+    return 'variety';
+  }
+  if (/(电影|剧场版|片$)/.test(name)) {
+    return 'movie';
+  }
+  if (/(剧|电视|连续)/.test(name)) {
+    return 'tv';
+  }
+  return null;
+}
+
+/** 分类名/标题是否含成人特征（站内词表 + 补充词表） */
+function isAdultName(name: string): boolean {
+  if (!name) {
+    return false;
+  }
+  const lower = name.toLowerCase();
+  if (yellowWords.some((word: string) => lower.includes(word.toLowerCase()))) {
+    return true;
+  }
+  return EXTRA_ADULT_WORDS.some((word) => lower.includes(word));
+}
+
+interface SourceClass {
+  typeId: string;
+  name: string;
+  isTop: boolean;
+}
+
+/** 拉取单个采集站的分类列表（苹果 CMS `?ac=list`） */
+async function fetchSourceClasses(apiSite: ApiSite): Promise<SourceClass[]> {
+  const sep = apiSite.api.includes('?') ? '&' : '?';
+  const url = `${apiSite.api}${sep}ac=list`;
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), PER_SITE_TIMEOUT_MS);
+
+  try {
+    const response = await fetch(url, {
+      headers: API_CONFIG.search.headers,
+      signal: controller.signal,
+    });
+    if (!response.ok) {
+      return [];
+    }
+    const data = await response.json();
+    const list = Array.isArray(data?.class) ? data.class : [];
+    return list
+      .filter((entry: { type_id?: unknown; type_name?: unknown }) => {
+        return entry && entry.type_id !== undefined && !!entry.type_name;
+      })
+      .map(
+        (entry: {
+          type_id: string | number;
+          type_name: string;
+          type_pid?: string | number;
+        }) => ({
+          typeId: String(entry.type_id),
+          name: String(entry.type_name),
+          // type_pid 为 0/空表示顶层分类；顶层分类通常能汇总其下子分类，覆盖面最广。
+          isTop: !Number(entry.type_pid),
+        })
+      );
+  } catch {
+    return [];
+  } finally {
+    clearTimeout(timeoutId);
+  }
+}
+
+/** 标准分类 → 各采集站对应的候选分类 ID（采集站常需多个候选，见 buildCategoryMap） */
+type CategoryMap = Record<string, { site: string; typeIds: string[] }[]>;
+
+let categoryMapMemo: { at: number; value: CategoryMap } | null = null;
+
+/** `源::标准分类` → 已确认无法用于分类浏览的分类 ID，避免重复试错 */
+const categoryInvalidMemo = new Map<string, Set<string>>();
+
+/** 单源单次最多尝试的候选分类数，控制边缘子请求总量 */
+const CATEGORY_FALLBACK_TRIES = 2;
+
+/** 分类浏览结果的内存缓存（只存原始列表，不含口令，可安全复用） */
+const categoryPageMemo = new Map<
+  string,
+  { at: number; value: SearchResult[] }
+>();
+
+/** 并发拉取全部启用的采集站分类，归一后建立映射 */
+async function buildCategoryMap(): Promise<CategoryMap> {
+  const config = await getConfig();
+  const apiSites = (config.SourceConfig || []).filter((site) => !site.disabled);
+  const filterAdult = !config.SiteConfig?.DisableYellowFilter;
+
+  const perSite = await mapWithConcurrency(
+    apiSites,
+    MAX_CONCURRENCY,
+    async (site) => ({ site, classes: await fetchSourceClasses(site) })
+  );
+
+  const map: CategoryMap = {};
+
+  for (const { site, classes } of perSite) {
+    if (classes.length === 0) {
+      continue;
+    }
+
+    const topClasses = classes.filter((entry) => entry.isTop);
+
+    // 纯成人采集站整站剔除：这类站的分类名（制服丝袜 / 欧美性爱…）会大面积
+    // 命中特征词，若只按分类名逐个过滤，其「卡通动漫」之类的中性分类
+    // 仍会混进正常的动漫入口。
+    if (filterAdult && topClasses.length >= 2) {
+      const hits = topClasses.filter((entry) => isAdultName(entry.name)).length;
+      if (hits / topClasses.length >= ADULT_SOURCE_HITS_RATIO && hits >= 2) {
+        continue;
+      }
+    }
+
+    // 收集该源在每个标准分类下的全部候选分类 ID。
+    //
+    // 候选顺序是关键：实测采集站普遍只接受「叶子分类」的 ID，
+    // 传顶层分类（type_pid=0）常常返回空列表 —— 例如 ffzy 传 t=1（电影片）
+    // 得到 0 条，传 t=6（动作片）则有 4 千多条。所以叶子分类在前、
+    // 顶层分类兜底，同级按 ID 升序（ID 小的通常为主分类）。
+    const matched = new Map<
+      string,
+      { typeId: string; isTop: boolean; id: number }[]
+    >();
+
+    for (const entry of classes) {
+      if (filterAdult && isAdultName(entry.name)) {
+        continue;
+      }
+      const key = categorizeTypeName(entry.name);
+      if (!key || !STANDARD_CATEGORY_KEYS.has(key)) {
+        continue;
+      }
+      const list = matched.get(key) || [];
+      list.push({
+        typeId: entry.typeId,
+        isTop: entry.isTop,
+        id: Number(entry.typeId) || 0,
+      });
+      matched.set(key, list);
+    }
+
+    matched.forEach((list, key) => {
+      list.sort((a, b) => {
+        if (a.isTop !== b.isTop) {
+          return a.isTop ? 1 : -1;
+        }
+        return a.id - b.id;
+      });
+      (map[key] ||= []).push({
+        site: site.key,
+        typeIds: list.map((entry) => entry.typeId),
+      });
+    });
+  }
+
+  return map;
+}
+
+/** 取分类映射（内存 → 边缘缓存 → 回源构建） */
+async function getCategoryMap(): Promise<CategoryMap> {
+  const now = Date.now();
+  if (categoryMapMemo && now - categoryMapMemo.at < CATEGORY_MAP_TTL * 1000) {
+    return categoryMapMemo.value;
+  }
+
+  const cache = getEdgeCache();
+  const cacheKey = new Request('https://tvbox.internal/category-map.json');
+  if (cache) {
+    try {
+      const cached = await cache.match(cacheKey);
+      if (cached) {
+        const value = (await cached.json()) as CategoryMap;
+        categoryMapMemo = { at: now, value };
+        return value;
+      }
+    } catch {
+      // 缓存不可用不影响主流程
+    }
+  }
+
+  const value = await buildCategoryMap();
+  if (Object.keys(value).length === 0) {
+    // 全部源都失败时不缓存，让下次请求重试，避免把空结果锁 6 小时。
+    return value;
+  }
+
+  categoryMapMemo = { at: now, value };
+  if (cache) {
+    try {
+      await cache.put(
+        cacheKey,
+        new Response(JSON.stringify(value), {
+          headers: {
+            'Content-Type': 'application/json',
+            'Cache-Control': `public, s-maxage=${CATEGORY_MAP_TTL}`,
+          },
+        })
+      );
+    } catch {
+      // 写缓存失败不影响本次响应
+    }
+  }
+  return value;
+}
+
+/** 采集站列表条目 → 站内统一结构 */
+function rawToSearchResult(raw: RawCmsItem, apiSite: ApiSite): SearchResult {
+  return {
+    id: String(raw.vod_id ?? ''),
+    title: (raw.vod_name || '').trim().replace(/\s+/g, ' '),
+    poster: raw.vod_pic || '',
+    episodes: [],
+    source: apiSite.key,
+    source_name: apiSite.name,
+    class: raw.vod_class,
+    year: raw.vod_year ? raw.vod_year.match(/\d{4}/)?.[0] || '' : 'unknown',
+    desc: cleanHtmlTags(raw.vod_content || ''),
+    type_name: raw.type_name,
+    douban_id: raw.vod_douban_id,
+  };
+}
+
+/**
+ * 分类浏览单源单页。
+ *
+ * 分类参数名用 `t` 而非 `type_id`：实测 type_id 会被所有采集站忽略
+ * （返回的是全站最新，与不带参数完全一致），真正生效的是 `t`。
+ * typeId 为空时退化为「全站最新」，由调用方按条目分类名二次过滤。
+ */
+async function fetchCategoryPage(
+  apiSite: ApiSite,
+  typeId: string,
+  page: number
+): Promise<SearchResult[]> {
+  const sep = apiSite.api.includes('?') ? '&' : '?';
+  const categoryQuery = typeId ? `&t=${encodeURIComponent(typeId)}` : '';
+  const url = `${apiSite.api}${sep}ac=videolist&pg=${page}${categoryQuery}`;
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), PER_SITE_TIMEOUT_MS);
+
+  try {
+    const response = await fetch(url, {
+      headers: API_CONFIG.search.headers,
+      signal: controller.signal,
+    });
+    if (!response.ok) {
+      return [];
+    }
+    const data = await response.json();
+    const list = Array.isArray(data?.list) ? data.list : [];
+    return list
+      .map((raw: RawCmsItem) => rawToSearchResult(raw, apiSite))
+      .filter((result: SearchResult) => !!result.id && !!result.title);
+  } catch {
+    return [];
+  } finally {
+    clearTimeout(timeoutId);
+  }
+}
+
+/** 退化路径：拉全站最新，再按条目自身的分类名筛出目标分类 */
+async function fetchWholeListFiltered(
+  apiSite: ApiSite,
+  categoryKey: string,
+  page: number
+): Promise<SearchResult[]> {
+  const list = await fetchCategoryPage(apiSite, '', page);
+  return list.filter(
+    (result) => categorizeTypeName(result.type_name || '') === categoryKey
+  );
+}
+
+/**
+ * 从单个采集站取某一页分类内容。
+ *
+ * 采集站支持程度差异很大，这里按三级策略处理：
+ *   1. 有候选分类 → 按页码轮转候选（翻页时能依次看到该分类下的不同子类，
+ *      如动作片 → 喜剧片 → …），命中的候选直接返回；
+ *   2. 候选试完仍为空 → 记住失效的 ID，返回空页（不误伤同源其它分类）；
+ *   3. 该源压根没提供分类信息 / 候选全部失效 → 退化到「全站最新 + 本地过滤」，
+ *      保证任何源都能贡献内容，且不会把不相干分类混进来。
+ */
+async function fetchCategoryFromSite(
+  apiSite: ApiSite,
+  categoryKey: string,
+  typeIds: string[],
+  page: number
+): Promise<SearchResult[]> {
+  const memoKey = `${apiSite.key}::${categoryKey}`;
+  const invalid = categoryInvalidMemo.get(memoKey) || new Set<string>();
+
+  if (typeIds.length === 0) {
+    return fetchWholeListFiltered(apiSite, categoryKey, page);
+  }
+
+  const usable = typeIds.filter((typeId) => !invalid.has(typeId));
+  if (usable.length === 0) {
+    return fetchWholeListFiltered(apiSite, categoryKey, page);
+  }
+
+  const tries = Math.min(usable.length, CATEGORY_FALLBACK_TRIES);
+  for (let index = 0; index < tries; index++) {
+    const typeId = usable[(page - 1 + index) % usable.length];
+    const list = await fetchCategoryPage(apiSite, typeId, page);
+    if (list.length > 0) {
+      return list;
+    }
+    // 该分类 ID 在这个源上拿不到数据，记录下来避免后续重复试。
+    invalid.add(typeId);
+    categoryInvalidMemo.set(memoKey, invalid);
+  }
+
+  return [];
+}
+
+export interface CategoryListResult {
+  list: CmsItem[];
+  page: number;
+  pagecount: number;
+  total: number;
+}
+
+/**
+ * 分类浏览：并发查询映射到该分类的若干采集站，交错合并后返回一页。
+ * 交错（round-robin）是为了让不同源的条目混排，避免整页都来自同一个源。
+ */
+export async function getCategoryList(
+  categoryKey: string,
+  page: number,
+  ctx: TvboxContext
+): Promise<CategoryListResult> {
+  const empty: CategoryListResult = { list: [], page, pagecount: 0, total: 0 };
+  if (!STANDARD_CATEGORY_KEYS.has(categoryKey)) {
+    return empty;
+  }
+
+  const map = await getCategoryMap();
+  const entries = (map[categoryKey] || []).slice(0, MAX_SITES_PER_CATEGORY);
+  if (entries.length === 0) {
+    return empty;
+  }
+
+  const config = await getConfig();
+  const filterAdult = !config.SiteConfig?.DisableYellowFilter;
+  const siteByKey = new Map(
+    (config.SourceConfig || []).map((site) => [site.key, site])
+  );
+
+  const pageMemoKey = `${categoryKey}:${page}`;
+  const memo = categoryPageMemo.get(pageMemoKey);
+  let merged: SearchResult[];
+
+  if (memo && Date.now() - memo.at < CATEGORY_PAGE_TTL * 1000) {
+    merged = memo.value;
+  } else {
+    const perSite = await mapWithConcurrency(
+      entries,
+      MAX_CONCURRENCY,
+      async (entry) => {
+        const site = siteByKey.get(entry.site);
+        if (!site) {
+          return [] as SearchResult[];
+        }
+        const results = await fetchCategoryFromSite(
+          site,
+          categoryKey,
+          entry.typeIds,
+          page
+        );
+        if (!filterAdult) {
+          return results;
+        }
+        return results.filter(
+          (result) =>
+            !isAdultName(result.title) && !isAdultName(result.type_name || '')
+        );
+      }
+    );
+
+    const interleaved: SearchResult[] = [];
+    const maxLen = perSite.reduce((max, list) => Math.max(max, list.length), 0);
+    for (let index = 0; index < maxLen; index++) {
+      for (const list of perSite) {
+        if (list[index]) {
+          interleaved.push(list[index]);
+        }
+      }
+    }
+
+    const seen = new Set<string>();
+    merged = [];
+    for (const result of interleaved) {
+      const id = encodeVodId(result.source, result.id);
+      if (seen.has(id)) {
+        continue;
+      }
+      seen.add(id);
+      merged.push(result);
+      if (merged.length >= MAX_CATEGORY_RESULTS) {
+        break;
+      }
+    }
+
+    if (merged.length > 0) {
+      categoryPageMemo.set(pageMemoKey, { at: Date.now(), value: merged });
+    }
+  }
+
+  return {
+    list: merged.map((result) => toCmsItem(result, ctx)),
+    page,
+    // 聚合源无法预知总页数：有数据就继续放行翻页，翻到空页即自然结束。
+    pagecount: merged.length > 0 ? MAX_CATEGORY_PAGE : Math.max(0, page - 1),
+    total: merged.length,
+  };
+}
+
 /** 取 Cloudflare 边缘缓存；本地 dev 等环境无 Cache API 时降级为不回源缓存。 */
 function getEdgeCache(): Cache | null {
   try {
@@ -592,10 +1130,11 @@ export async function proxyImage(rawUrl: string): Promise<Response> {
 }
 
 /**
- * 苹果 CMS 协议统一入口。TVBox 会用它发三类请求：
- *   - ?ac=list                        → 分类列表（聚合源无统一分类，返回空）
- *   - ?ac=videolist&wd=关键词          → 搜索
- *   - ?ac=detail&ids=源key@@视频id      → 详情（含播放地址）
+ * 苹果 CMS 协议统一入口。TVBox 会用它发四类请求：
+ *   - ?ac=list                          → 分类列表（归一后的标准分类）
+ *   - ?ac=videolist&t=分类&pg=页码        → 分类浏览
+ *   - ?ac=videolist&wd=关键词            → 搜索
+ *   - ?ac=detail&ids=源key@@视频id        → 详情（含播放地址）
  */
 export async function handleCmsRequest(
   request: Request,
@@ -609,15 +1148,14 @@ export async function handleCmsRequest(
     searchParams.get('keyword') ||
     searchParams.get('k') ||
     '';
-
-  // 分类列表：30 个采集站的分类体系各不相同，无法合并，故返回空。
-  // TVBox 会退化为「搜索型源」，搜索功能不受影响。
-  if (ac === 'list') {
-    return NextResponse.json(
-      { class: [], list: [] },
-      { headers: JSON_HEADERS }
-    );
-  }
+  // 分类标识：我们对外用标准分类 key（movie/tv/…），客户端回传的即它。
+  const categoryKey =
+    searchParams.get('t') || searchParams.get('type_id') || '';
+  const pageRaw = searchParams.get('pg') || searchParams.get('page') || '1';
+  const page = Math.min(
+    Math.max(parseInt(pageRaw, 10) || 1, 1),
+    MAX_CATEGORY_PAGE
+  );
 
   if (ids) {
     const singleId = ids.split(',')[0].trim();
@@ -659,6 +1197,45 @@ export async function handleCmsRequest(
       console.warn('TVBox 聚合搜索失败:', (error as Error).message);
       return NextResponse.json(
         { list: [], page: 1, pagecount: 1, limit: 0, total: 0 },
+        { headers: JSON_HEADERS }
+      );
+    }
+  }
+
+  // 分类浏览：无关键词、无 ids，只带分类与页码。
+  if (categoryKey) {
+    try {
+      const result = await getCategoryList(categoryKey, page, ctx);
+      return NextResponse.json(
+        { ...result, limit: result.list.length },
+        { headers: JSON_HEADERS }
+      );
+    } catch (error) {
+      console.warn('TVBox 分类浏览失败:', (error as Error).message);
+      return NextResponse.json(
+        { class: [], list: [], page, pagecount: 0, limit: 0, total: 0 },
+        { headers: JSON_HEADERS }
+      );
+    }
+  }
+
+  if (ac === 'list' || ac === '') {
+    try {
+      const map = await getCategoryMap();
+      const classList = STANDARD_CATEGORIES.filter(
+        (category) => (map[category.key] || []).length > 0
+      ).map((category) => ({
+        type_id: category.key,
+        type_name: category.name,
+      }));
+      return NextResponse.json(
+        { class: classList, list: [] },
+        { headers: JSON_HEADERS }
+      );
+    } catch (error) {
+      console.warn('TVBox 分类列表获取失败:', (error as Error).message);
+      return NextResponse.json(
+        { class: [], list: [] },
         { headers: JSON_HEADERS }
       );
     }
