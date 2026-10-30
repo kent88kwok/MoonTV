@@ -5,6 +5,7 @@ import { NextResponse } from 'next/server';
 import type { ApiSite } from '@/lib/config';
 import { API_CONFIG, getConfig } from '@/lib/config';
 import { getDetailFromApi, searchFromApi } from '@/lib/downstream';
+import sourceSpeed from '@/lib/tvbox-source-speed.json';
 import type { SearchResult } from '@/lib/types';
 import { cleanHtmlTags } from '@/lib/utils';
 import { yellowWords } from '@/lib/yellow';
@@ -289,6 +290,59 @@ function toCmsItem(
   return item;
 }
 
+/* ------------------------------------------------------------------ *
+ * 搜索排序：按线路实测速度加权
+ *
+ * 背景：采集站各自挂不同的 CDN，速度能差十几倍。实测「非凡影视」的 CDN
+ * （super.ffzy-online6.com）在电视上只有约 200KB/s，而 3000k 片源（4 秒一片 942KB）
+ * 需要 236KB/s —— 净亏 15%，缓冲区几十秒就见底，于是播放断断续续；换成有国内节点的
+ * 源立刻正常。这个差别在客户端完全看不出来，用户只会默认点列表第一条。
+ *
+ * 为什么不按「播放域名是否解析到境内 IP」：
+ *   试过，不可靠。采集站 CDN 的 GeoDNS 对服务端（阿里 DoH，哪怕带上客户端网段做 ECS）
+ *   和对你家路由器的解析结果并不一致：实测 vod1.maowushi.com 经 DoH 返回美国 IP，
+ *   而电视自己解析到国内 59.37.89.219、播放流畅；反过来 super.ffzy-online6.com 无论
+ *   怎么查都只有境外 IP。用 DNS 判属地会系统性判错。
+ *
+ * 所以用真值：脚本在电视上直接下载各源的分片，量真实吞吐，写进
+ * tvbox-source-speed.json（由 scripts/measure-source-speed.mjs 生成）。
+ * 运行时只是查表，零延迟、零网络请求，也不会拖慢搜索。
+ * ------------------------------------------------------------------ */
+
+/** 实测速度分档阈值（KB/s）。
+ *  3000k 片源（4 秒一片约 942KB）需要 236KB/s 才只是"不倒退"，
+ *  要留缓冲余量得 500 以上；200 以下必然周期性断流。 */
+const SPEED_FAST_KBPS = 500;
+const SPEED_OK_KBPS = 200;
+
+/** 实测速度表：源 key → KB/s。表为空时全部按未测处理。 */
+const SPEED_TABLE: Record<string, number> =
+  (sourceSpeed as unknown as { kbps?: Record<string, number> }).kbps ?? {};
+
+/** 取某源实测速度（KB/s），没测过返回 0 */
+function sourceKbps(sourceKey: string): number {
+  const kbps = SPEED_TABLE[sourceKey];
+  return typeof kbps === 'number' && kbps > 0 ? kbps : 0;
+}
+
+/**
+ * 源 → 速度档位。0 = 通畅，1 = 够用/未知，2 = 明显不够。
+ * 未知排在中间：没测过不等于坏，但也不该盖过实测通畅的源。
+ */
+function sourceSpeedTier(sourceKey: string): number {
+  const kbps = sourceKbps(sourceKey);
+  if (kbps <= 0) {
+    return 1;
+  }
+  if (kbps >= SPEED_FAST_KBPS) {
+    return 0;
+  }
+  if (kbps >= SPEED_OK_KBPS) {
+    return 1;
+  }
+  return 2;
+}
+
 /**
  * 聚合搜索：并发全部启用的采集站，合并去重后按相关度排序。
  * 一次 TVBox 搜索 = 站内 30 个源一起搜，这是「聚合源」相比「源清单」的核心价值。
@@ -339,7 +393,8 @@ export async function searchAggregated(
     return true;
   });
 
-  // 相关度排序：完全匹配 > 前缀匹配 > 包含 > 其他，同级保持原源顺序。
+  // 相关度排序：完全匹配 > 前缀匹配 > 包含 > 其他。
+  // 同级再按线路 CDN 属地加权（境内优先），最后保持原源顺序。
   const normalized = keyword.trim().toLowerCase();
   const rank = (title: string): number => {
     const t = (title || '').toLowerCase();
@@ -355,11 +410,27 @@ export async function searchAggregated(
     return 3;
   };
 
+  // 同一部片往往有十几个源，客户端默认播第一条，而各源线路速度能差十几倍。
+  // 同级相关度内先按实测速度分档排，实测通畅的源顶上去（查表，零额外开销）。
   results = results
     .map((result: SearchResult, index: number) => ({ result, index }))
     .sort((a, b) => {
       const diff = rank(a.result.title) - rank(b.result.title);
-      return diff !== 0 ? diff : a.index - b.index;
+      if (diff !== 0) {
+        return diff;
+      }
+      const tierA = sourceSpeedTier(a.result.source);
+      const tierB = sourceSpeedTier(b.result.source);
+      if (tierA !== tierB) {
+        return tierA - tierB;
+      }
+      // 同档内按实测速度从高到低，没有测过的保持原源顺序。
+      const kbpsA = sourceKbps(a.result.source);
+      const kbpsB = sourceKbps(b.result.source);
+      if (kbpsA !== kbpsB) {
+        return kbpsB - kbpsA;
+      }
+      return a.index - b.index;
     })
     .map((entry) => entry.result);
 

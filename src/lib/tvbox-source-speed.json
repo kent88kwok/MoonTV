@@ -1,0 +1,125 @@
+{
+  "generatedAt": "2026-10-30T15:48:30.254Z",
+  "device": "192.168.2.174:5555",
+  "note": "电视端实测的线路下载速度（KB/s，中位数）。3000k 片源约需 300KB/s 才不卡。由 scripts/measure-source-speed.mjs 生成。",
+  "kbps": {
+    "ffzy": 336,
+    "dyttzy": 214,
+    "jisu": 2211,
+    "zy360": 1325,
+    "lzi": 223,
+    "bfzy": 322,
+    "zuid": 241,
+    "mdzy": 280,
+    "ffzy2": 253,
+    "bdzy": 186,
+    "s11bat": 221,
+    "m155": 119,
+    "lsbzy": 238,
+    "hhzy": 722,
+    "p2100": 88,
+    "subo": 304,
+    "lbzy": 225,
+    "hongniu": 2859,
+    "guangs": 1409,
+    "maoyan": 1,
+    "uku88": 92,
+    "iqiyizy": 25,
+    "huya": 97
+  },
+  "detail": {
+    "ffzy": {
+      "name": "非凡影视",
+      "url": "https://super.ffzy-online6.com/20261017/43484_dfc7ecce/3000k/hls/19684efd847d07db554156223aaf02a7.ts"
+    },
+    "dyttzy": {
+      "name": "电影天堂资源",
+      "url": "https://vip.dytt-tvs.com/20261021/42033_8627a599/3000k/hls/983a1dc3b8ec0276a1c72626db1761a0.ts?hash=1d17450ca5098b3be498"
+    },
+    "jisu": {
+      "name": "极速资源",
+      "url": "https://p.jisuts.com:999/hls/954/20261009/4510727/plist1.ts"
+    },
+    "zy360": {
+      "name": "360资源",
+      "url": "https://vod1.maowushi.com/20261005/jKPKBSOB/3079kb/hls/Tzq4Meqo.ts"
+    },
+    "lzi": {
+      "name": "量子资源站",
+      "url": "https://v.lzcdn31.com/20260801/9200_be5b480d/2000k/hls/dc4edfedc64000001.ts"
+    },
+    "bfzy": {
+      "name": "暴风资源",
+      "url": "https://fengbao13.com/video/yaowushaonvdeninan/0f4c7d56b34f/0000001.ts"
+    },
+    "zuid": {
+      "name": "最大资源",
+      "url": "https://yyv6.qwe132456.cc/yyv6/202406/16/xFk80KzTQ212/video/2000k_1080/hls/4sWzWLcFf0.ts"
+    },
+    "mdzy": {
+      "name": "魔都资源",
+      "url": "https://bf.modujx17.com/20261010/i3yf2bUD/1848kb/hls/RVmBZ5h8.ts"
+    },
+    "ffzy2": {
+      "name": "非凡影视(采集)",
+      "url": "https://super.ffzy-online6.com/20261017/43484_dfc7ecce/3000k/hls/19684efd847d07db554156223aaf02a7.ts"
+    },
+    "bdzy": {
+      "name": "百度资源",
+      "url": "https://tsb3.bdzybf22.com/videos/202610/21/6ad852b780d729d4e80e63da/278ca1/index1.jpeg"
+    },
+    "s11bat": {
+      "name": "11bat资源",
+      "url": "https://2609.lajiao2026.com/20261009/RCP0FQBQ/9622kb/hls/ESYCf5Kt.ts"
+    },
+    "m155": {
+      "name": "155资源",
+      "url": "https://2609.v155p.com/20261009/RCP0FQBQ/9622kb/hls/ESYCf5Kt.ts"
+    },
+    "lsbzy": {
+      "name": "绿色资源",
+      "url": "https://lsbbf11.com/20261018/DoMaUgPr/2075kb/hls/YDghdD9z.ts"
+    },
+    "hhzy": {
+      "name": "HH资源",
+      "url": "https://p.hhwenjian.com:65/hls/953/20261009/4510722/plist1.ts"
+    },
+    "p2100": {
+      "name": "P2100资源",
+      "url": "https://v5.adfg8.vip/wjv5/202309/04/hcKHtKUKbm1/video/1000k_720/hls/YHseXkn6RS.ts"
+    },
+    "subo": {
+      "name": "速播资源",
+      "url": "https://g.xlzyd.com:9999/hls/953/20261009/4510722/plist1.ts"
+    },
+    "lbzy": {
+      "name": "蓝光资源",
+      "url": "https://2609.lbsl2026.com/20261009/RCP0FQBQ/9622kb/hls/ESYCf5Kt.ts"
+    },
+    "hongniu": {
+      "name": "红牛资源",
+      "url": "https://hnts.ymuuy.com:65/hls/953/20261009/4510722/plist1.ts"
+    },
+    "guangs": {
+      "name": "光速资源",
+      "url": "https://gs.gszyi.com:999/hls/953/20261004/4493400/plist1.ts"
+    },
+    "maoyan": {
+      "name": "猫眼资源",
+      "url": "https://play.maoyanplay.top/20261023/IgM1yvSl/571kb/hls/NKopYJRm.ts"
+    },
+    "uku88": {
+      "name": "UKU资源",
+      "url": "https://ukzy.ukubf8.com/20261030/bXHKvc01/2000kb/hls/HZcjNZjQ.ts"
+    },
+    "iqiyizy": {
+      "name": "爱奇艺采集",
+      "url": "https://play.ly166.com:65/videos/20260911/6aa3818c5c14f34ca5061adf/f8eee8/indexEAf2Gd4Eb1aCFg4c.jpeg"
+    },
+    "huya": {
+      "name": "虎牙资源",
+      "url": "https://c.baisiweiting.com:18443/hls/953/20261004/4493400/plist1.ts"
+    }
+  },
+  "failed": []
+}
