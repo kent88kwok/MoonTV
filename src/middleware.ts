@@ -127,6 +127,8 @@ function shouldSkipAuth(pathname: string): boolean {
     '/screenshot.png',
     // TVBox 客户端无法携带 Cookie，改由路由内部校验 ?pwd= 口令
     '/api/tvbox',
+    // 每日自动聚合的公开源配置（纯公开接口地址，无任何私密信息），供影视仓直接拉取
+    '/tvbox/',
   ];
 
   return skipPaths.some((path) => pathname.startsWith(path));
@@ -135,6 +137,6 @@ function shouldSkipAuth(pathname: string): boolean {
 // 配置middleware匹配规则
 export const config = {
   matcher: [
-    '/((?!_next/static|_next/image|favicon.ico|login|warning|api/login|api/register|api/logout|api/cron|api/server-config|api/tvbox).*)',
+    '/((?!_next/static|_next/image|favicon.ico|login|warning|api/login|api/register|api/logout|api/cron|api/server-config|api/tvbox|tvbox/).*)',
   ],
 };
