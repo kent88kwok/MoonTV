@@ -1,0 +1,23 @@
+{
+ "spider": "",
+ "wallPic": "",
+ "sites": [
+  {
+   "key": "hub_bb2fdb5a",
+   "name": "爱奇艺资源(备用)",
+   "type": 1,
+   "api": "https://iqiyizyapi.com/api.php/provide/vod/",
+   "searchable": 0,
+   "quickSearch": 0,
+   "filterable": 1
+  }
+ ],
+ "lives": [],
+ "rule": {},
+ "ads": [],
+ "flags": [],
+ "ijk": [],
+ "dland": [],
+ "dr": {},
+ "version": "20261031"
+}

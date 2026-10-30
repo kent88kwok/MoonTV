@@ -1,0 +1,2216 @@
+{
+ "generatedAt": "2026-10-30T16:55:27.437Z",
+ "stats": {
+  "known": 120,
+  "alive": 80,
+  "fast": 38,
+  "backup": 1,
+  "searchable": 60,
+  "hosts": 66
+ },
+ "sources": [
+  {
+   "name": "🍀｜360｜采集",
+   "api": "https://360zy.com/api.php/seaxml/vod/",
+   "host": "360zy.com",
+   "ok": true,
+   "ms": 293,
+   "cats": 51,
+   "catSample": "电影/连续剧/综艺",
+   "searchable": true,
+   "okCount": 5,
+   "failCount": 0,
+   "lastOk": "2026-10-30T16:55:27.432Z",
+   "from": [
+    "chitue/dongliTV",
+    "zengjian03/han",
+    "state",
+    "hebijunge/tvbox-config"
+   ],
+   "score": 0.967
+  },
+  {
+   "name": "🔬 量子",
+   "api": "https://cj.lziapi.com/api.php/provide/vod/",
+   "host": "cj.lziapi.com",
+   "ok": true,
+   "ms": 158,
+   "cats": 40,
+   "catSample": "电影片/连续剧/综艺片",
+   "searchable": true,
+   "okCount": 5,
+   "failCount": 0,
+   "lastOk": "2026-10-30T16:55:27.432Z",
+   "from": [
+    "jiusanzhou/tvbox",
+    "hebijunge/tvbox-config",
+    "zhuzhuyule/juhe-subhub",
+    "yjg3366/pic",
+    "pkj99/demo",
+    "maoystv/000"
+   ],
+   "score": 0.95
+  },
+  {
+   "name": "猫眼资源",
+   "api": "https://api.maoyanapi.top/api.php/provide/vod/from/mym3u8",
+   "host": "api.maoyanapi.top",
+   "ok": true,
+   "ms": 609,
+   "cats": 53,
+   "catSample": "电影/连续剧/综艺",
+   "searchable": true,
+   "okCount": 2,
+   "failCount": 0,
+   "lastOk": "2026-10-30T16:55:27.432Z",
+   "from": [
+    "cyh92/live",
+    "state"
+   ],
+   "score": 0.935
+  },
+  {
+   "name": "TV-最大点播",
+   "api": "http://zuidazy.me/api.php/provide/vod/",
+   "host": "zuidazy.me",
+   "ok": true,
+   "ms": 756,
+   "cats": 59,
+   "catSample": "电影/电视剧/综艺",
+   "searchable": true,
+   "okCount": 2,
+   "failCount": 0,
+   "lastOk": "2026-10-30T16:55:27.432Z",
+   "from": [
+    "cyh92/live",
+    "state"
+   ],
+   "score": 0.933
+  },
+  {
+   "name": "索尼|采集",
+   "api": "https://suoniapi.com/api.php/provide/vod/at/json/",
+   "host": "suoniapi.com",
+   "ok": true,
+   "ms": 350,
+   "cats": 61,
+   "catSample": "电影/电视剧/综艺",
+   "searchable": false,
+   "okCount": 2,
+   "failCount": 0,
+   "lastOk": "2026-10-30T16:55:27.432Z",
+   "from": [
+    "hebijunge/tvbox-config",
+    "state"
+   ],
+   "score": 0.932
+  },
+  {
+   "name": "优质 | 采集",
+   "api": "https://api.yyzy-tv.vip/inc/apijson.php",
+   "host": "api.yyzy-tv.vip",
+   "ok": true,
+   "ms": 840,
+   "cats": 62,
+   "catSample": "电影/连续剧/综艺",
+   "searchable": true,
+   "okCount": 5,
+   "failCount": 0,
+   "lastOk": "2026-10-30T16:55:27.432Z",
+   "from": [
+    "zhuzhuyule/juhe-subhub",
+    "state"
+   ],
+   "score": 0.925
+  },
+  {
+   "name": "影视 | 非凡",
+   "api": "http://ffzy.tv/api.php/provide/vod/",
+   "host": "ffzy.tv",
+   "ok": true,
+   "ms": 239,
+   "cats": 31,
+   "catSample": "电影片/连续剧/综艺片",
+   "searchable": true,
+   "okCount": 5,
+   "failCount": 0,
+   "lastOk": "2026-10-30T16:55:27.432Z",
+   "from": [
+    "zhuzhuyule/juhe-subhub",
+    "state"
+   ],
+   "score": 0.923
+  },
+  {
+   "name": "360资源",
+   "api": "https://360zy.com/api.php/provide/vod/",
+   "host": "360zy.com",
+   "ok": true,
+   "ms": 687,
+   "cats": 51,
+   "catSample": "电影/连续剧/综艺",
+   "searchable": true,
+   "okCount": 6,
+   "failCount": 0,
+   "lastOk": "2026-10-30T16:55:27.432Z",
+   "from": [
+    "25175/tvyuan",
+    "zhuzhuyule/juhe-subhub",
+    "kimwang1978/tvbox",
+    "ZTHA000/tvbox",
+    "multi:17264.kstore.space",
+    "state"
+   ],
+   "score": 0.921
+  },
+  {
+   "name": "豪华|采集",
+   "api": "https://hhzyapi.com/api.php/provide/vod/at/json/",
+   "host": "hhzyapi.com",
+   "ok": true,
+   "ms": 663,
+   "cats": 48,
+   "catSample": "电视剧/电影/欧美剧",
+   "searchable": true,
+   "okCount": 2,
+   "failCount": 0,
+   "lastOk": "2026-10-30T16:55:27.432Z",
+   "from": [
+    "hebijunge/tvbox-config",
+    "state"
+   ],
+   "score": 0.916
+  },
+  {
+   "name": "最大资源",
+   "api": "https://api.zuidapi.com/api.php/provide/vod/",
+   "host": "api.zuidapi.com",
+   "ok": true,
+   "ms": 910,
+   "cats": 59,
+   "catSample": "电影/电视剧/综艺",
+   "searchable": true,
+   "okCount": 6,
+   "failCount": 0,
+   "lastOk": "2026-10-30T16:55:27.432Z",
+   "from": [
+    "gxnas/TvBox",
+    "leonardoliu91/tvbox",
+    "state",
+    "cyh92/live"
+   ],
+   "score": 0.915
+  },
+  {
+   "name": "📱天堂网ᶜʲ┃采集",
+   "api": "http://caiji.dyttzyapi.com/api.php/provide/vod/from/dyttm3u8/at/json/",
+   "host": "caiji.dyttzyapi.com",
+   "ok": true,
+   "ms": 345,
+   "cats": 32,
+   "catSample": "电影片/连续剧/综艺片",
+   "searchable": true,
+   "okCount": 5,
+   "failCount": 0,
+   "lastOk": "2026-10-30T16:55:27.432Z",
+   "from": [
+    "woshishiq1/hipy-drpy2",
+    "state"
+   ],
+   "score": 0.913
+  },
+  {
+   "name": "360资源",
+   "api": "https://360zyzz.com/api.php/provide/vod/at/json",
+   "host": "360zyzz.com",
+   "ok": true,
+   "ms": 792,
+   "cats": 51,
+   "catSample": "电影/连续剧/综艺",
+   "searchable": true,
+   "okCount": 6,
+   "failCount": 0,
+   "lastOk": "2026-10-30T16:55:27.432Z",
+   "from": [
+    "gxnas/TvBox",
+    "state"
+   ],
+   "score": 0.908
+  },
+  {
+   "name": "爱奇资源",
+   "api": "https://www.iqiyizy.com/api.php/provide/vod/from/iqym3u8",
+   "host": "www.iqiyizy.com",
+   "ok": true,
+   "ms": 626,
+   "cats": 43,
+   "catSample": "国产动漫/日韩动漫/欧美动漫",
+   "searchable": true,
+   "okCount": 2,
+   "failCount": 0,
+   "lastOk": "2026-10-30T16:55:27.432Z",
+   "from": [
+    "cyh92/live",
+    "state"
+   ],
+   "score": 0.908
+  },
+  {
+   "name": "非凡影视",
+   "api": "http://api.ffzyapi.com/api.php/provide/vod/",
+   "host": "api.ffzyapi.com",
+   "ok": true,
+   "ms": 378,
+   "cats": 31,
+   "catSample": "电影片/连续剧/综艺片",
+   "searchable": true,
+   "okCount": 6,
+   "failCount": 0,
+   "lastOk": "2026-10-30T16:55:27.432Z",
+   "from": [
+    "gxnas/TvBox",
+    "state",
+    "cyh92/live"
+   ],
+   "score": 0.907
+  },
+  {
+   "name": "🐂 红牛",
+   "api": "https://www.hongniuzy3.com/api.php/provide/vod/",
+   "host": "www.hongniuzy3.com",
+   "ok": true,
+   "ms": 669,
+   "cats": 44,
+   "catSample": "电影/连续剧/综艺",
+   "searchable": true,
+   "okCount": 5,
+   "failCount": 0,
+   "lastOk": "2026-10-30T16:55:27.432Z",
+   "from": [
+    "jiusanzhou/tvbox",
+    "wujb1976/zy",
+    "state",
+    "cyh92/live"
+   ],
+   "score": 0.905
+  },
+  {
+   "name": "新浪资源(切)",
+   "api": "http://api.xinlangapi.com/xinlangapi.php/provide/vod/",
+   "host": "api.xinlangapi.com",
+   "ok": true,
+   "ms": 757,
+   "cats": 48,
+   "catSample": "电影/电视剧/动漫",
+   "searchable": true,
+   "okCount": 5,
+   "failCount": 0,
+   "lastOk": "2026-10-30T16:55:27.432Z",
+   "from": [
+    "hebijunge/tvbox-config",
+    "zhuzhuyule/juhe-subhub",
+    "yjg3366/pic",
+    "pkj99/demo",
+    "maoystv/000",
+    "state"
+   ],
+   "score": 0.905
+  },
+  {
+   "name": "影视 | 建安",
+   "api": "http://154.219.117.232:9981/jacloudapi.php/provide/vod/",
+   "host": "154.219.117.232:9981",
+   "ok": true,
+   "ms": 97,
+   "cats": 21,
+   "catSample": "电影/剧集/综艺",
+   "searchable": true,
+   "okCount": 5,
+   "failCount": 0,
+   "lastOk": "2026-10-30T16:55:27.432Z",
+   "from": [
+    "zhuzhuyule/juhe-subhub",
+    "state",
+    "cyh92/live"
+   ],
+   "score": 0.903
+  },
+  {
+   "name": "🆕非凡┃资源",
+   "api": "http://cj.ffzyapi.com/api.php/provide/vod/",
+   "host": "cj.ffzyapi.com",
+   "ok": true,
+   "ms": 585,
+   "cats": 31,
+   "catSample": "电影片/连续剧/综艺片",
+   "searchable": true,
+   "okCount": 6,
+   "failCount": 0,
+   "lastOk": "2026-10-30T16:55:27.432Z",
+   "from": [
+    "25175/tvyuan",
+    "jiusanzhou/tvbox",
+    "zhuzhuyule/juhe-subhub",
+    "hebijunge/tvbox-config",
+    "yjg3366/pic",
+    "pkj99/demo"
+   ],
+   "score": 0.883
+  },
+  {
+   "name": "无尽资源",
+   "api": "https://api.wujinapi.me/api.php/provide/vod/",
+   "host": "api.wujinapi.me",
+   "ok": true,
+   "ms": 794,
+   "cats": 63,
+   "catSample": "电影/连续剧/综艺",
+   "searchable": false,
+   "okCount": 6,
+   "failCount": 0,
+   "lastOk": "2026-10-30T16:55:27.432Z",
+   "from": [
+    "gxnas/TvBox",
+    "zhuzhuyule/juhe-subhub",
+    "leonardoliu91/tvbox",
+    "state",
+    "cyh92/live"
+   ],
+   "score": 0.881
+  },
+  {
+   "name": "TV-金鹰点播",
+   "api": "https://jinyingzy.com/api.php/provide/vod/",
+   "host": "jinyingzy.com",
+   "ok": true,
+   "ms": 916,
+   "cats": 44,
+   "catSample": "电视剧/电影/欧美剧",
+   "searchable": true,
+   "okCount": 2,
+   "failCount": 0,
+   "lastOk": "2026-10-30T16:55:27.432Z",
+   "from": [
+    "cyh92/live",
+    "state"
+   ],
+   "score": 0.876
+  },
+  {
+   "name": "闪电资源(切)",
+   "api": "http://sdzyapi.com/api.php/provide/vod/",
+   "host": "sdzyapi.com",
+   "ok": true,
+   "ms": 846,
+   "cats": 59,
+   "catSample": "电影/电视剧/综艺",
+   "searchable": false,
+   "okCount": 5,
+   "failCount": 0,
+   "lastOk": "2026-10-30T16:55:27.432Z",
+   "from": [
+    "hebijunge/tvbox-config",
+    "zhuzhuyule/juhe-subhub",
+    "yjg3366/pic",
+    "pkj99/demo",
+    "maoystv/000",
+    "state"
+   ],
+   "score": 0.872
+  },
+  {
+   "name": "🌼金鹰┃资源🌼",
+   "api": "https://jyzyapi.com/provide/vod/from/jinyingm3u8/at/json",
+   "host": "jyzyapi.com",
+   "ok": true,
+   "ms": 965,
+   "cats": 44,
+   "catSample": "电视剧/电影/欧美剧",
+   "searchable": true,
+   "okCount": 5,
+   "failCount": 0,
+   "lastOk": "2026-10-30T16:55:27.432Z",
+   "from": [
+    "multi:17264.kstore.space",
+    "state"
+   ],
+   "score": 0.871
+  },
+  {
+   "name": "🌼茅台┃影视🌼",
+   "api": "https://caiji.maotaizy.cc/api.php/provide/vod/",
+   "host": "caiji.maotaizy.cc",
+   "ok": true,
+   "ms": 778,
+   "cats": 54,
+   "catSample": "电影/连续剧/综艺片",
+   "searchable": false,
+   "okCount": 5,
+   "failCount": 0,
+   "lastOk": "2026-10-30T16:55:27.432Z",
+   "from": [
+    "multi:17264.kstore.space",
+    "state"
+   ],
+   "score": 0.868
+  },
+  {
+   "name": "极速资源",
+   "api": "https://jszyapi.com/api.php/provide/vod/at/json",
+   "host": "jszyapi.com",
+   "ok": true,
+   "ms": 1085,
+   "cats": 48,
+   "catSample": "电视剧/电影/欧美剧",
+   "searchable": true,
+   "okCount": 6,
+   "failCount": 0,
+   "lastOk": "2026-10-30T16:55:27.432Z",
+   "from": [
+    "gxnas/TvBox",
+    "state"
+   ],
+   "score": 0.867
+  },
+  {
+   "name": "❤新浪资源",
+   "api": "https://api.xinlangapi.com/xinlangapi.php/provide//vod/",
+   "host": "api.xinlangapi.com",
+   "ok": true,
+   "ms": 1087,
+   "cats": 48,
+   "catSample": "电影/电视剧/动漫",
+   "searchable": true,
+   "okCount": 5,
+   "failCount": 0,
+   "lastOk": "2026-10-30T16:55:27.432Z",
+   "from": [
+    "zhuzhuyule/juhe-subhub",
+    "state"
+   ],
+   "score": 0.867
+  },
+  {
+   "name": "🕹️淘片┃采集",
+   "api": "https://taopianapi.com/cjapi/mc/vod/json.html",
+   "host": "taopianapi.com",
+   "ok": true,
+   "ms": 765,
+   "cats": 30,
+   "catSample": "动漫/海外动漫/综艺/海外综艺/综艺/日韩综艺",
+   "searchable": true,
+   "okCount": 5,
+   "failCount": 0,
+   "lastOk": "2026-10-30T16:55:27.432Z",
+   "from": [
+    "zhuzhuyule/juhe-subhub",
+    "state"
+   ],
+   "score": 0.859
+  },
+  {
+   "name": "🦄黄色仓库(旧)｜🔞",
+   "api": "https://hsckzy.vip/api.php/provide/vod/",
+   "host": "hsckzy.vip",
+   "ok": true,
+   "ms": 1010,
+   "cats": 41,
+   "catSample": "国产区/AV区/欧美区",
+   "searchable": true,
+   "okCount": 5,
+   "failCount": 0,
+   "lastOk": "2026-10-30T16:55:27.432Z",
+   "from": [
+    "me-site/me-site.github.io",
+    "state"
+   ],
+   "score": 0.858
+  },
+  {
+   "name": "最大|点播",
+   "api": "https://zuida.xyz/api.php/provide/vod/from/zuidam3u8",
+   "host": "zuida.xyz",
+   "ok": true,
+   "ms": 1447,
+   "cats": 59,
+   "catSample": "电影/电视剧/综艺",
+   "searchable": true,
+   "okCount": 2,
+   "failCount": 0,
+   "lastOk": "2026-10-30T16:55:27.432Z",
+   "from": [
+    "cyh92/live",
+    "state"
+   ],
+   "score": 0.852
+  },
+  {
+   "name": "金鹰 | 采集",
+   "api": "https://jyzyapi.com/api.php/provide/vod/",
+   "host": "jyzyapi.com",
+   "ok": true,
+   "ms": 1127,
+   "cats": 44,
+   "catSample": "电视剧/电影/欧美剧",
+   "searchable": true,
+   "okCount": 5,
+   "failCount": 0,
+   "lastOk": "2026-10-30T16:55:27.432Z",
+   "from": [
+    "zhuzhuyule/juhe-subhub",
+    "state",
+    "cyh92/live"
+   ],
+   "score": 0.852
+  },
+  {
+   "name": "天涯影视",
+   "api": "https://ty.tyyszy5.com/api.php/provide/vod/from/tym3u8",
+   "host": "ty.tyyszy5.com",
+   "ok": true,
+   "ms": 600,
+   "cats": 39,
+   "catSample": "电影/电视剧/综艺",
+   "searchable": false,
+   "okCount": 2,
+   "failCount": 0,
+   "lastOk": "2026-10-30T16:55:27.432Z",
+   "from": [
+    "cyh92/live",
+    "state"
+   ],
+   "score": 0.851
+  },
+  {
+   "name": "鸭鸭资源",
+   "api": "https://cj.yayazy.net/api.php/provide/vod/",
+   "host": "cj.yayazy.net",
+   "ok": true,
+   "ms": 1041,
+   "cats": 59,
+   "catSample": "电影/电视剧/综艺",
+   "searchable": false,
+   "okCount": 6,
+   "failCount": 0,
+   "lastOk": "2026-10-30T16:55:27.432Z",
+   "from": [
+    "gxnas/TvBox",
+    "leonardoliu91/tvbox",
+    "state",
+    "cyh92/live"
+   ],
+   "score": 0.849
+  },
+  {
+   "name": "👖裤佬丨采集",
+   "api": "https://api.wsyzy.net/api.php/provide/vod/",
+   "host": "api.wsyzy.net",
+   "ok": true,
+   "ms": 1066,
+   "cats": 60,
+   "catSample": "电影/电视剧/综艺",
+   "searchable": false,
+   "okCount": 6,
+   "failCount": 0,
+   "lastOk": "2026-10-30T16:55:27.432Z",
+   "from": [
+    "25175/tvyuan",
+    "songlees355-wq/okay",
+    "woshishiq1/hipy-drpy2",
+    "multi:17264.kstore.space",
+    "state"
+   ],
+   "score": 0.849
+  },
+  {
+   "name": "飘零资源",
+   "api": "https://p2100.net/api.php/provide/vod/",
+   "host": "p2100.net",
+   "ok": true,
+   "ms": 868,
+   "cats": 27,
+   "catSample": "电影/连续剧/综艺",
+   "searchable": true,
+   "okCount": 6,
+   "failCount": 0,
+   "lastOk": "2026-10-30T16:55:27.432Z",
+   "from": [
+    "gxnas/TvBox",
+    "state",
+    "cyh92/live"
+   ],
+   "score": 0.84
+  },
+  {
+   "name": "🦄lsb资源｜🔞",
+   "api": "https://apilsbzy1.com/api.php/provide/vod/",
+   "host": "apilsbzy1.com",
+   "ok": true,
+   "ms": 842,
+   "cats": 25,
+   "catSample": "精品推荐/国产精品/主播秀色",
+   "searchable": true,
+   "okCount": 5,
+   "failCount": 0,
+   "lastOk": "2026-10-30T16:55:27.432Z",
+   "from": [
+    "me-site/me-site.github.io",
+    "state"
+   ],
+   "score": 0.838
+  },
+  {
+   "name": "🥬牛牛资源",
+   "api": "https://api.niuniuzy.me/api.php/provide/vod/",
+   "host": "api.niuniuzy.me",
+   "ok": true,
+   "ms": 1146,
+   "cats": 59,
+   "catSample": "电影/电视剧/综艺",
+   "searchable": false,
+   "okCount": 5,
+   "failCount": 0,
+   "lastOk": "2026-10-30T16:55:27.432Z",
+   "from": [
+    "leonardoliu91/tvbox",
+    "state",
+    "cyh92/live"
+   ],
+   "score": 0.837
+  },
+  {
+   "name": "🎞️天堂┃采集",
+   "api": "http://caiji.dyttzyapi.com/api.php/provide/vod/from/dyttm3u8/at/m3u8/",
+   "host": "caiji.dyttzyapi.com",
+   "ok": true,
+   "ms": 997,
+   "cats": 32,
+   "catSample": "电影片/连续剧/综艺片",
+   "searchable": true,
+   "okCount": 5,
+   "failCount": 0,
+   "lastOk": "2026-10-30T16:55:27.432Z",
+   "from": [
+    "kimwang1978/tvbox",
+    "chitue/dongliTV",
+    "zengjian03/han",
+    "state"
+   ],
+   "score": 0.837
+  },
+  {
+   "name": "神马",
+   "api": "https://www.vod38.com/api.php/provide/vod/",
+   "host": "www.vod38.com",
+   "ok": true,
+   "ms": 1051,
+   "cats": 34,
+   "catSample": "电影/剧集/综艺",
+   "searchable": true,
+   "okCount": 5,
+   "failCount": 0,
+   "lastOk": "2026-10-30T16:55:27.432Z",
+   "from": [
+    "qq1719248506/Video-interface",
+    "state"
+   ],
+   "score": 0.836
+  },
+  {
+   "name": "金鹰资源",
+   "api": "https://jyzyapi.com/provide/vod/",
+   "host": "jyzyapi.com",
+   "ok": true,
+   "ms": 1268,
+   "cats": 44,
+   "catSample": "电视剧/电影/欧美剧",
+   "searchable": true,
+   "okCount": 6,
+   "failCount": 0,
+   "lastOk": "2026-10-30T16:55:27.432Z",
+   "from": [
+    "25175/tvyuan",
+    "pkj99/demo",
+    "state"
+   ],
+   "score": 0.835
+  },
+  {
+   "name": "影视 | 天涯",
+   "api": "http://tyyszy.com/api.php/provide/vod/",
+   "host": "tyyszy.com",
+   "ok": true,
+   "ms": 737,
+   "cats": 39,
+   "catSample": "电影/电视剧/综艺",
+   "searchable": false,
+   "okCount": 5,
+   "failCount": 0,
+   "lastOk": "2026-10-30T16:55:27.432Z",
+   "from": [
+    "zhuzhuyule/juhe-subhub",
+    "state",
+    "cyh92/live"
+   ],
+   "score": 0.835
+  },
+  {
+   "name": "豪华资源",
+   "api": "https://haohuazy.com/api.php/provide/vod/from/hhm3u8",
+   "host": "haohuazy.com",
+   "ok": true,
+   "ms": 1375,
+   "cats": 48,
+   "catSample": "电视剧/电影/欧美剧",
+   "searchable": true,
+   "okCount": 2,
+   "failCount": 0,
+   "lastOk": "2026-10-30T16:55:27.432Z",
+   "from": [
+    "cyh92/live",
+    "state"
+   ],
+   "score": 0.833
+  },
+  {
+   "name": "速播 | 采集",
+   "api": "https://subocaiji.com/api.php/provide/vod/",
+   "host": "subocaiji.com",
+   "ok": true,
+   "ms": 1315,
+   "cats": 44,
+   "catSample": "电影/电视剧/动漫",
+   "searchable": true,
+   "okCount": 5,
+   "failCount": 0,
+   "lastOk": "2026-10-30T16:55:27.432Z",
+   "from": [
+    "zhuzhuyule/juhe-subhub",
+    "pkj99/demo",
+    "state",
+    "cyh92/live"
+   ],
+   "score": 0.83
+  },
+  {
+   "name": "🐯虎牙采集",
+   "api": "https://www.huyaapi.com/api.php/provide/vod/from/hym3u8",
+   "host": "www.huyaapi.com",
+   "ok": true,
+   "ms": 1320,
+   "cats": 44,
+   "catSample": "电视剧/电影/欧美剧",
+   "searchable": true,
+   "okCount": 5,
+   "failCount": 0,
+   "lastOk": "2026-10-30T16:55:27.432Z",
+   "from": [
+    "zhuzhuyule/juhe-subhub",
+    "multi:17264.kstore.space",
+    "state",
+    "cyh92/live"
+   ],
+   "score": 0.829
+  },
+  {
+   "name": "🔥️火狐┃秒播",
+   "api": "https://hhzyapi.com/api.php/provide/vod/",
+   "host": "hhzyapi.com",
+   "ok": true,
+   "ms": 1415,
+   "cats": 48,
+   "catSample": "电视剧/电影/欧美剧",
+   "searchable": true,
+   "okCount": 6,
+   "failCount": 0,
+   "lastOk": "2026-10-30T16:55:27.432Z",
+   "from": [
+    "25175/tvyuan",
+    "zhuzhuyule/juhe-subhub",
+    "hebijunge/tvbox-config",
+    "leonardoliu91/tvbox",
+    "state",
+    "cyh92/live"
+   ],
+   "score": 0.828
+  },
+  {
+   "name": "索尼资源",
+   "api": "https://suoniapi.com/api.php/provide/vod/",
+   "host": "suoniapi.com",
+   "ok": true,
+   "ms": 1263,
+   "cats": 61,
+   "catSample": "电影/电视剧/综艺",
+   "searchable": false,
+   "okCount": 6,
+   "failCount": 0,
+   "lastOk": "2026-10-30T16:55:27.432Z",
+   "from": [
+    "gxnas/TvBox",
+    "songlees355-wq/okay",
+    "zhuzhuyule/juhe-subhub",
+    "hebijunge/tvbox-config",
+    "pkj99/demo",
+    "leonardoliu91/tvbox"
+   ],
+   "score": 0.826
+  },
+  {
+   "name": "无尽 | 采集",
+   "api": "https://api.wujinapi.net/api.php/provide/vod/",
+   "host": "api.wujinapi.net",
+   "ok": true,
+   "ms": 1273,
+   "cats": 63,
+   "catSample": "电影/连续剧/综艺",
+   "searchable": false,
+   "okCount": 5,
+   "failCount": 0,
+   "lastOk": "2026-10-30T16:55:27.432Z",
+   "from": [
+    "zhuzhuyule/juhe-subhub",
+    "state",
+    "cyh92/live"
+   ],
+   "score": 0.825
+  },
+  {
+   "name": "TV-wujinapi无尽",
+   "api": "https://api.wujinapi.cc/api.php/provide/vod/",
+   "host": "api.wujinapi.cc",
+   "ok": true,
+   "ms": 1308,
+   "cats": 63,
+   "catSample": "电影/连续剧/综艺",
+   "searchable": false,
+   "okCount": 2,
+   "failCount": 0,
+   "lastOk": "2026-10-30T16:55:27.432Z",
+   "from": [
+    "cyh92/live",
+    "state"
+   ],
+   "score": 0.821
+  },
+  {
+   "name": "🌟 创享影视",
+   "api": "http://ys.cxkjg.cn/api/provide/vod/",
+   "host": "ys.cxkjg.cn",
+   "ok": true,
+   "ms": 700,
+   "cats": 9,
+   "catSample": "电视剧/电影/记录片",
+   "searchable": true,
+   "okCount": 5,
+   "failCount": 0,
+   "lastOk": "2026-10-30T16:55:27.432Z",
+   "from": [
+    "zhuzhuyule/juhe-subhub",
+    "state"
+   ],
+   "score": 0.814
+  },
+  {
+   "name": "速播",
+   "api": "https://subocj.com/api.php/provide/vod/from/subyun/at/json",
+   "host": "subocj.com",
+   "ok": true,
+   "ms": 1472,
+   "cats": 44,
+   "catSample": "电影/电视剧/动漫",
+   "searchable": true,
+   "okCount": 5,
+   "failCount": 0,
+   "lastOk": "2026-10-30T16:55:27.432Z",
+   "from": [
+    "songlees355-wq/okay",
+    "state"
+   ],
+   "score": 0.812
+  },
+  {
+   "name": "红牛资源(切)",
+   "api": "https://www.hongniuzy2.com/api.php/provide/vod/",
+   "host": "www.hongniuzy2.com",
+   "ok": true,
+   "ms": 1491,
+   "cats": 44,
+   "catSample": "电影/连续剧/综艺",
+   "searchable": true,
+   "okCount": 5,
+   "failCount": 0,
+   "lastOk": "2026-10-30T16:55:27.432Z",
+   "from": [
+    "hebijunge/tvbox-config",
+    "zhuzhuyule/juhe-subhub",
+    "yjg3366/pic",
+    "pkj99/demo",
+    "leonardoliu91/tvbox",
+    "maoystv/000"
+   ],
+   "score": 0.809
+  },
+  {
+   "name": "鸡坤 | 采集",
+   "api": "https://jkunzyapi.com/api.php/provide/vod/",
+   "host": "jkunzyapi.com",
+   "ok": true,
+   "ms": 1098,
+   "cats": 25,
+   "catSample": "中文字幕/日本有码/日本无码",
+   "searchable": true,
+   "okCount": 6,
+   "failCount": 0,
+   "lastOk": "2026-10-30T16:55:27.432Z",
+   "from": [
+    "25175/tvyuan",
+    "state"
+   ],
+   "score": 0.808
+  },
+  {
+   "name": "🍀┃非凡┃资源",
+   "api": "http://ffzy5.tv/api.php/provide/vod/",
+   "host": "ffzy5.tv",
+   "ok": true,
+   "ms": 1274,
+   "cats": 31,
+   "catSample": "电影片/连续剧/综艺片",
+   "searchable": true,
+   "okCount": 5,
+   "failCount": 0,
+   "lastOk": "2026-10-30T16:55:27.432Z",
+   "from": [
+    "zhuzhuyule/juhe-subhub",
+    "multi:700sjro44343.vicp.fun",
+    "state"
+   ],
+   "score": 0.802
+  },
+  {
+   "name": "TV-无尽资源",
+   "api": "https://api.wujinapi.com/api.php/provide/vod/",
+   "host": "api.wujinapi.com",
+   "ok": true,
+   "ms": 2003,
+   "cats": 63,
+   "catSample": "电影/连续剧/综艺",
+   "searchable": true,
+   "okCount": 2,
+   "failCount": 0,
+   "lastOk": "2026-10-30T16:55:27.432Z",
+   "from": [
+    "cyh92/live",
+    "state"
+   ],
+   "score": 0.79
+  },
+  {
+   "name": "U酷资源",
+   "api": "https://api.ukuapi88.com/api.php/provide/vod/",
+   "host": "api.ukuapi88.com",
+   "ok": true,
+   "ms": 1345,
+   "cats": 29,
+   "catSample": "电影/电视剧/综艺",
+   "searchable": true,
+   "okCount": 6,
+   "failCount": 0,
+   "lastOk": "2026-10-30T16:55:27.432Z",
+   "from": [
+    "gxnas/TvBox",
+    "songlees355-wq/okay",
+    "state",
+    "cyh92/live"
+   ],
+   "score": 0.789
+  },
+  {
+   "name": "🦄国产资源｜🔞",
+   "api": "https://fqzy.me//api.php/provide/vod/",
+   "host": "fqzy.me",
+   "ok": true,
+   "ms": 1375,
+   "cats": 29,
+   "catSample": "视频一区/视频二区/欧美精品",
+   "searchable": true,
+   "okCount": 5,
+   "failCount": 0,
+   "lastOk": "2026-10-30T16:55:27.432Z",
+   "from": [
+    "me-site/me-site.github.io",
+    "state"
+   ],
+   "score": 0.785
+  },
+  {
+   "name": "🥑┃量子┃资源",
+   "api": "https://lzizy1.com/api.php/provide/vod/",
+   "host": "lzizy1.com",
+   "ok": true,
+   "ms": 1656,
+   "cats": 40,
+   "catSample": "电影片/连续剧/综艺片",
+   "searchable": true,
+   "okCount": 5,
+   "failCount": 0,
+   "lastOk": "2026-10-30T16:55:27.432Z",
+   "from": [
+    "zhuzhuyule/juhe-subhub",
+    "state"
+   ],
+   "score": 0.78
+  },
+  {
+   "name": "艾旦 | 采集",
+   "api": "https://www.lovedan.net/api.php/provide/vod/",
+   "host": "www.lovedan.net",
+   "ok": true,
+   "ms": 2087,
+   "cats": 70,
+   "catSample": "电影/电视剧/综艺",
+   "searchable": true,
+   "okCount": 5,
+   "failCount": 0,
+   "lastOk": "2026-10-30T16:55:27.432Z",
+   "from": [
+    "zhuzhuyule/juhe-subhub",
+    "state"
+   ],
+   "score": 0.78
+  },
+  {
+   "name": "旺旺短剧",
+   "api": "https://zhangqun1818.serv00.net/ww.php",
+   "host": "zhangqun1818.serv00.net",
+   "ok": true,
+   "ms": 1693,
+   "cats": 38,
+   "catSample": "都市/赘婿/战神",
+   "searchable": true,
+   "okCount": 2,
+   "failCount": 0,
+   "lastOk": "2026-10-30T16:55:27.432Z",
+   "from": [
+    "DodgeZhang/tvbox",
+    "state"
+   ],
+   "score": 0.771
+  },
+  {
+   "name": "天涯影视资源网采集接口",
+   "api": "https://tyyszyapi.com/api.php/provide/vod/",
+   "host": "tyyszyapi.com",
+   "ok": true,
+   "ms": 1294,
+   "cats": 39,
+   "catSample": "电影/电视剧/综艺",
+   "searchable": false,
+   "okCount": 2,
+   "failCount": 0,
+   "lastOk": "2026-10-30T16:55:27.432Z",
+   "from": [
+    "cyh92/live",
+    "state"
+   ],
+   "score": 0.77
+  },
+  {
+   "name": "魔都",
+   "api": "https://www.mdzyapi.com/api.php/provide/vod/",
+   "host": "www.mdzyapi.com",
+   "ok": true,
+   "ms": 1876,
+   "cats": 42,
+   "catSample": "国产动漫/日韩动漫/欧美动漫",
+   "searchable": true,
+   "okCount": 5,
+   "failCount": 0,
+   "lastOk": "2026-10-30T16:55:27.432Z",
+   "from": [
+    "songlees355-wq/okay",
+    "hebijunge/tvbox-config",
+    "leonardoliu91/tvbox",
+    "multi:17264.kstore.space",
+    "state",
+    "cyh92/live"
+   ],
+   "score": 0.759
+  },
+  {
+   "name": "茅台资源站",
+   "api": "https://caiji.maotaizy.cc/api.php/provide/vod/at/josn/",
+   "host": "caiji.maotaizy.cc",
+   "ok": true,
+   "ms": 1871,
+   "cats": 54,
+   "catSample": "电影/连续剧/综艺片",
+   "searchable": false,
+   "okCount": 6,
+   "failCount": 0,
+   "lastOk": "2026-10-30T16:55:27.432Z",
+   "from": [
+    "gxnas/TvBox",
+    "state",
+    "cyh92/live"
+   ],
+   "score": 0.74
+  },
+  {
+   "name": "魔都动漫资源",
+   "api": "https://www.mdzyapi.com/api.php/provide/vod/at/json",
+   "host": "www.mdzyapi.com",
+   "ok": true,
+   "ms": 2092,
+   "cats": 42,
+   "catSample": "国产动漫/日韩动漫/欧美动漫",
+   "searchable": true,
+   "okCount": 6,
+   "failCount": 0,
+   "lastOk": "2026-10-30T16:55:27.432Z",
+   "from": [
+    "gxnas/TvBox",
+    "state"
+   ],
+   "score": 0.734
+  },
+  {
+   "name": "快车",
+   "api": "https://caiji.kuaichezy.org/api.php/provide/vod/",
+   "host": "caiji.kuaichezy.org",
+   "ok": true,
+   "ms": 2089,
+   "cats": 59,
+   "catSample": "电影/电视剧/综艺",
+   "searchable": false,
+   "okCount": 5,
+   "failCount": 0,
+   "lastOk": "2026-10-30T16:55:27.432Z",
+   "from": [
+    "songlees355-wq/okay",
+    "state"
+   ],
+   "score": 0.727
+  },
+  {
+   "name": "360资源",
+   "api": "https://360zyzz.com/api.php/provide/vod/from/360zy",
+   "host": "360zyzz.com",
+   "ok": true,
+   "ms": 2366,
+   "cats": 51,
+   "catSample": "电影/连续剧/综艺",
+   "searchable": true,
+   "okCount": 2,
+   "failCount": 0,
+   "lastOk": "2026-10-30T16:55:27.432Z",
+   "from": [
+    "cyh92/live",
+    "state"
+   ],
+   "score": 0.725
+  },
+  {
+   "name": "虎牙资源",
+   "api": "https://www.huyaapi.com/api.php/provide/vod/at/json",
+   "host": "www.huyaapi.com",
+   "ok": true,
+   "ms": 2227,
+   "cats": 44,
+   "catSample": "电视剧/电影/欧美剧",
+   "searchable": true,
+   "okCount": 6,
+   "failCount": 0,
+   "lastOk": "2026-10-30T16:55:27.432Z",
+   "from": [
+    "gxnas/TvBox",
+    "state"
+   ],
+   "score": 0.724
+  },
+  {
+   "name": "🦄桃花资源｜🔞",
+   "api": "https://thzy1.me/api.php/provide/vod/",
+   "host": "thzy1.me",
+   "ok": true,
+   "ms": 1622,
+   "cats": 15,
+   "catSample": "视频1区/国产精品/华语AV",
+   "searchable": true,
+   "okCount": 5,
+   "failCount": 0,
+   "lastOk": "2026-10-30T16:55:27.432Z",
+   "from": [
+    "me-site/me-site.github.io",
+    "state"
+   ],
+   "score": 0.722
+  },
+  {
+   "name": "CK资源",
+   "api": "https://ckzy.me/api.php/provide/vod/",
+   "host": "ckzy.me",
+   "ok": true,
+   "ms": 1052,
+   "cats": 2,
+   "catSample": "伦理片/教程",
+   "searchable": false,
+   "okCount": 6,
+   "failCount": 0,
+   "lastOk": "2026-10-30T16:55:27.432Z",
+   "from": [
+    "gxnas/TvBox",
+    "zhuzhuyule/juhe-subhub",
+    "state",
+    "cyh92/live"
+   ],
+   "score": 0.706
+  },
+  {
+   "name": "影视 | 极速",
+   "api": "https://jszyapi.com/api.php/provide/vod/",
+   "host": "jszyapi.com",
+   "ok": true,
+   "ms": 2597,
+   "cats": 48,
+   "catSample": "电视剧/电影/欧美剧",
+   "searchable": true,
+   "okCount": 5,
+   "failCount": 0,
+   "lastOk": "2026-10-30T16:55:27.432Z",
+   "from": [
+    "zhuzhuyule/juhe-subhub",
+    "hebijunge/tvbox-config",
+    "adminouyang/231006",
+    "franksun1211/TVBOX",
+    "multi:17264.kstore.space",
+    "state"
+   ],
+   "score": 0.69
+  },
+  {
+   "name": "🤣魔都┃动漫",
+   "api": "https://caiji.moduapi.cc/api.php/provide/vod/",
+   "host": "caiji.moduapi.cc",
+   "ok": true,
+   "ms": 2521,
+   "cats": 42,
+   "catSample": "国产动漫/日韩动漫/欧美动漫",
+   "searchable": true,
+   "okCount": 5,
+   "failCount": 0,
+   "lastOk": "2026-10-30T16:55:27.432Z",
+   "from": [
+    "kimwang1978/tvbox",
+    "state",
+    "cyh92/live"
+   ],
+   "score": 0.684
+  },
+  {
+   "name": "影视 | 电影天堂",
+   "api": "http://caiji.dyttzyapi.com/api.php/provide/vod/",
+   "host": "caiji.dyttzyapi.com",
+   "ok": true,
+   "ms": 2352,
+   "cats": 32,
+   "catSample": "电影片/连续剧/综艺片",
+   "searchable": true,
+   "okCount": 5,
+   "failCount": 0,
+   "lastOk": "2026-10-30T16:55:27.432Z",
+   "from": [
+    "zhuzhuyule/juhe-subhub",
+    "pkj99/demo",
+    "multi:17264.kstore.space",
+    "state",
+    "cyh92/live"
+   ],
+   "score": 0.679
+  },
+  {
+   "name": "艾旦资源",
+   "api": "https://lovedan.net/api.php/provide/vod/",
+   "host": "lovedan.net",
+   "ok": true,
+   "ms": 3958,
+   "cats": 70,
+   "catSample": "电影/电视剧/综艺",
+   "searchable": true,
+   "okCount": 2,
+   "failCount": 0,
+   "lastOk": "2026-10-30T16:55:27.432Z",
+   "from": [
+    "cyh92/live",
+    "state"
+   ],
+   "score": 0.65
+  },
+  {
+   "name": "🦄乐播资源｜🔞",
+   "api": "https://lbapi9.com/api.php/provide/vod/",
+   "host": "lbapi9.com",
+   "ok": true,
+   "ms": 2357,
+   "cats": 17,
+   "catSample": "亚洲情色/国产主播/国产自拍",
+   "searchable": true,
+   "okCount": 5,
+   "failCount": 0,
+   "lastOk": "2026-10-30T16:55:27.432Z",
+   "from": [
+    "me-site/me-site.github.io",
+    "state"
+   ],
+   "score": 0.641
+  },
+  {
+   "name": "🎏百度┃采集",
+   "api": "https://api.apibdzy.com/api.php/provide/vod/",
+   "host": "api.apibdzy.com",
+   "ok": true,
+   "ms": 3614,
+   "cats": 54,
+   "catSample": "电影/电视剧/综艺",
+   "searchable": true,
+   "okCount": 5,
+   "failCount": 0,
+   "lastOk": "2026-10-30T16:55:27.432Z",
+   "from": [
+    "zhuzhuyule/juhe-subhub",
+    "leonardoliu91/tvbox",
+    "TontFeng/TVBOX",
+    "multi:17264.kstore.space",
+    "state",
+    "sec-an/TVHelper"
+   ],
+   "score": 0.635
+  },
+  {
+   "name": "爱奇艺资源",
+   "api": "https://iqiyizyapi.com/api.php/provide/vod/",
+   "host": "iqiyizyapi.com",
+   "ok": false,
+   "ms": 1039,
+   "cats": 43,
+   "catSample": "国产动漫/日韩动漫/欧美动漫",
+   "searchable": false,
+   "okCount": 3,
+   "failCount": 2,
+   "lastOk": "2026-10-30T16:49:54.744Z",
+   "lastWhy": "http503",
+   "from": [
+    "gxnas/TvBox",
+    "state"
+   ],
+   "score": 0.63
+  },
+  {
+   "name": "暴风资源",
+   "api": "https://bfzyapi.com/api.php/provide/vod/",
+   "host": "bfzyapi.com",
+   "ok": true,
+   "ms": 5761,
+   "cats": 49,
+   "catSample": "电影片/动作片/喜剧片",
+   "searchable": true,
+   "okCount": 6,
+   "failCount": 0,
+   "lastOk": "2026-10-30T16:55:27.432Z",
+   "from": [
+    "gxnas/TvBox",
+    "multi:dxawi.github.io",
+    "jiusanzhou/tvbox",
+    "zhuzhuyule/juhe-subhub",
+    "hebijunge/tvbox-config",
+    "kimwang1978/tvbox"
+   ],
+   "score": 0.623
+  },
+  {
+   "name": "🌪️暴风影音",
+   "api": "https://app.bfzyapi.com/api.php/provide/vod/",
+   "host": "app.bfzyapi.com",
+   "ok": true,
+   "ms": 3536,
+   "cats": 49,
+   "catSample": "电影片/动作片/喜剧片",
+   "searchable": true,
+   "okCount": 5,
+   "failCount": 0,
+   "lastOk": "2026-10-30T16:55:27.432Z",
+   "from": [
+    "zhuzhuyule/juhe-subhub",
+    "state"
+   ],
+   "score": 0.623
+  },
+  {
+   "name": "🦁 豪华",
+   "api": "https://www.haohuazy.com/api.php/provide/vod/",
+   "host": "www.haohuazy.com",
+   "ok": true,
+   "ms": 4133,
+   "cats": 48,
+   "catSample": "电视剧/电影/欧美剧",
+   "searchable": true,
+   "okCount": 5,
+   "failCount": 0,
+   "lastOk": "2026-10-30T16:55:27.432Z",
+   "from": [
+    "jiusanzhou/tvbox",
+    "wujb1976/zy",
+    "state"
+   ],
+   "score": 0.62
+  },
+  {
+   "name": "光速资源2",
+   "api": "https://api.guangsuapi.com/api.php/provide/vod/",
+   "host": "api.guangsuapi.com",
+   "ok": true,
+   "ms": 3867,
+   "cats": 44,
+   "catSample": "电影/电视剧/综艺",
+   "searchable": true,
+   "okCount": 6,
+   "failCount": 0,
+   "lastOk": "2026-10-30T16:55:27.432Z",
+   "from": [
+    "25175/tvyuan",
+    "hebijunge/tvbox-config",
+    "zhuzhuyule/juhe-subhub",
+    "pkj99/demo",
+    "maoystv/000",
+    "adminouyang/231006"
+   ],
+   "score": 0.61
+  },
+  {
+   "name": "CNTV低分辨",
+   "api": "https://zhangqun1818.serv00.net/cctv.php",
+   "host": "zhangqun1818.serv00.net",
+   "ok": true,
+   "ms": 3827,
+   "cats": 69,
+   "catSample": "今日说法/新闻联播/百家讲坛",
+   "searchable": false,
+   "okCount": 2,
+   "failCount": 0,
+   "lastOk": "2026-10-30T16:55:27.432Z",
+   "from": [
+    "DodgeZhang/tvbox",
+    "state"
+   ],
+   "score": 0.6
+  },
+  {
+   "name": "索尼-闪电资源",
+   "api": "https://xsd.sdzyapi.com/api.php/provide/vod/",
+   "host": "xsd.sdzyapi.com",
+   "ok": true,
+   "ms": 3257,
+   "cats": 59,
+   "catSample": "电影/电视剧/综艺",
+   "searchable": false,
+   "okCount": 2,
+   "failCount": 0,
+   "lastOk": "2026-10-30T16:55:27.432Z",
+   "from": [
+    "cyh92/live",
+    "state"
+   ],
+   "score": 0.598
+  },
+  {
+   "name": "茅台 | 采集",
+   "api": "https://mtzy.me/api.php/provide/vod/",
+   "host": "mtzy.me",
+   "ok": true,
+   "ms": 5002,
+   "cats": 54,
+   "catSample": "电影/连续剧/综艺片",
+   "searchable": false,
+   "okCount": 5,
+   "failCount": 0,
+   "lastOk": "2026-10-30T16:55:27.432Z",
+   "from": [
+    "zhuzhuyule/juhe-subhub",
+    "state"
+   ],
+   "score": 0.585
+  },
+  {
+   "name": "TV-豆瓣资源",
+   "api": "https://dbzy.tv/api.php/provide/vod/",
+   "host": "dbzy.tv",
+   "ok": true,
+   "ms": 3288,
+   "cats": 53,
+   "catSample": "电影/连续剧/综艺片",
+   "searchable": false,
+   "okCount": 2,
+   "failCount": 0,
+   "lastOk": "2026-10-30T16:55:27.432Z",
+   "from": [
+    "cyh92/live",
+    "state"
+   ],
+   "score": 0.583
+  },
+  {
+   "name": "❤️短剧一",
+   "api": "https://cj.lzcaiji.com/api.php/provide/vod/from/liangzi/",
+   "host": "cj.lzcaiji.com",
+   "ok": false,
+   "ms": 1817,
+   "cats": 40,
+   "catSample": "电影片/连续剧/综艺片",
+   "searchable": false,
+   "okCount": 1,
+   "failCount": 1,
+   "lastOk": "2026-10-30T16:52:43.946Z",
+   "lastWhy": "neterr",
+   "from": [
+    "lubin776/tvbox",
+    "leiatai/leocloud",
+    "state"
+   ],
+   "score": 0.486
+  },
+  {
+   "name": "蚂蚁｜采集",
+   "api": "http://dsakf23665.com/api.php/provide/vod/from/NBY",
+   "host": "dsakf23665.com",
+   "ok": false,
+   "ms": 3000,
+   "cats": 0,
+   "searchable": false,
+   "okCount": 0,
+   "failCount": 1,
+   "lastWhy": "neterr",
+   "from": [
+    "adminouyang/231006"
+   ],
+   "score": 0.023
+  },
+  {
+   "name": "新浪资源",
+   "api": "https://api.xinlangapi.com/xinlangapi.php/provide/vod/at/xml/",
+   "host": "api.xinlangapi.com",
+   "ok": false,
+   "ms": 3000,
+   "cats": 0,
+   "searchable": false,
+   "okCount": 0,
+   "failCount": 1,
+   "lastWhy": "notjson",
+   "from": [
+    "25175/tvyuan"
+   ],
+   "score": 0.023
+  },
+  {
+   "name": "金鹰影视",
+   "api": "https://jyzyapi.com/provide/vod/from/jinyingm3u8/at/xml/",
+   "host": "jyzyapi.com",
+   "ok": false,
+   "ms": 3000,
+   "cats": 0,
+   "searchable": false,
+   "okCount": 0,
+   "failCount": 1,
+   "lastWhy": "notjson",
+   "from": [
+    "25175/tvyuan",
+    "gxnas/TvBox"
+   ],
+   "score": 0.023
+  },
+  {
+   "name": "黑木耳资源",
+   "api": "https://json02.heimuer.xyz/api.php/provide/vod/",
+   "host": "json02.heimuer.xyz",
+   "ok": false,
+   "ms": 3000,
+   "cats": 0,
+   "searchable": false,
+   "okCount": 0,
+   "failCount": 1,
+   "lastWhy": "http403",
+   "from": [
+    "gxnas/TvBox",
+    "zhuzhuyule/juhe-subhub",
+    "Journey4U/sgdc",
+    "kimwang1978/tvbox",
+    "ZTHA000/tvbox"
+   ],
+   "score": 0.023
+  },
+  {
+   "name": "量子资源",
+   "api": "https://cj.lziapi.com/api.php/provide/vod/from/liangzi/at/xml/",
+   "host": "cj.lziapi.com",
+   "ok": false,
+   "ms": 3000,
+   "cats": 0,
+   "searchable": false,
+   "okCount": 0,
+   "failCount": 1,
+   "lastWhy": "notjson",
+   "from": [
+    "gxnas/TvBox",
+    "songlees355-wq/okay"
+   ],
+   "score": 0.023
+  },
+  {
+   "name": "电影天堂",
+   "api": "http://caiji.dyttzyapi.com/api.php/provide/vod/at/xml/",
+   "host": "caiji.dyttzyapi.com",
+   "ok": false,
+   "ms": 3000,
+   "cats": 0,
+   "searchable": false,
+   "okCount": 0,
+   "failCount": 1,
+   "lastWhy": "notjson",
+   "from": [
+    "gxnas/TvBox",
+    "songlees355-wq/okay"
+   ],
+   "score": 0.023
+  },
+  {
+   "name": "如意资源",
+   "api": "https://cj.rycjapi.com/api.php/provide/vod/",
+   "host": "cj.rycjapi.com",
+   "ok": false,
+   "ms": 3000,
+   "cats": 0,
+   "searchable": false,
+   "okCount": 0,
+   "failCount": 1,
+   "lastWhy": "neterr",
+   "from": [
+    "gxnas/TvBox",
+    "zhuzhuyule/juhe-subhub",
+    "hebijunge/tvbox-config",
+    "me-site/me-site.github.io",
+    "DodgeZhang/tvbox",
+    "multi:17264.kstore.space"
+   ],
+   "score": 0.023
+  },
+  {
+   "name": "天涯资源",
+   "api": "https://tyyszyapi.com/api.php/provide/vod/at/xml/",
+   "host": "tyyszyapi.com",
+   "ok": false,
+   "ms": 3000,
+   "cats": 0,
+   "searchable": false,
+   "okCount": 0,
+   "failCount": 1,
+   "lastWhy": "notjson",
+   "from": [
+    "gxnas/TvBox"
+   ],
+   "score": 0.023
+  },
+  {
+   "name": "卧龙资源",
+   "api": "https://collect.wolongzy.cc/api.php/provide/vod/at/xml/",
+   "host": "collect.wolongzy.cc",
+   "ok": false,
+   "ms": 3000,
+   "cats": 0,
+   "searchable": false,
+   "okCount": 0,
+   "failCount": 1,
+   "lastWhy": "neterr",
+   "from": [
+    "gxnas/TvBox"
+   ],
+   "score": 0.023
+  },
+  {
+   "name": "豆瓣资源",
+   "api": "https://caiji.dbzy5.com/api.php/provide/vod/at/josn/",
+   "host": "caiji.dbzy5.com",
+   "ok": false,
+   "ms": 3000,
+   "cats": 0,
+   "searchable": false,
+   "okCount": 0,
+   "failCount": 1,
+   "lastWhy": "neterr",
+   "from": [
+    "gxnas/TvBox"
+   ],
+   "score": 0.023
+  },
+  {
+   "name": "魔爪资源",
+   "api": "https://mozhuazy.com/api.php/provide/vod/",
+   "host": "mozhuazy.com",
+   "ok": false,
+   "ms": 3000,
+   "cats": 0,
+   "searchable": false,
+   "okCount": 0,
+   "failCount": 1,
+   "lastWhy": "neterr",
+   "from": [
+    "gxnas/TvBox",
+    "cyh92/live"
+   ],
+   "score": 0.023
+  },
+  {
+   "name": "iKun资源",
+   "api": "https://ikunzyapi.com/api.php/provide/vod/",
+   "host": "ikunzyapi.com",
+   "ok": false,
+   "ms": 3000,
+   "cats": 0,
+   "searchable": false,
+   "okCount": 0,
+   "failCount": 1,
+   "lastWhy": "neterr",
+   "from": [
+    "gxnas/TvBox",
+    "zhuzhuyule/juhe-subhub",
+    "hebijunge/tvbox-config",
+    "pkj99/demo",
+    "Journey4U/sgdc",
+    "DodgeZhang/tvbox"
+   ],
+   "score": 0.023
+  },
+  {
+   "name": "小猫咪资源",
+   "api": "https://zy.xmm.hk/api.php/provide/vod/",
+   "host": "zy.xmm.hk",
+   "ok": false,
+   "ms": 3000,
+   "cats": 0,
+   "searchable": false,
+   "okCount": 0,
+   "failCount": 1,
+   "lastWhy": "neterr",
+   "from": [
+    "gxnas/TvBox"
+   ],
+   "score": 0.023
+  },
+  {
+   "name": "旺旺短剧",
+   "api": "https://wwzy.tv/api.php/provide/vod/",
+   "host": "wwzy.tv",
+   "ok": false,
+   "ms": 3000,
+   "cats": 0,
+   "searchable": false,
+   "okCount": 0,
+   "failCount": 1,
+   "lastWhy": "neterr",
+   "from": [
+    "gxnas/TvBox",
+    "cyh92/live"
+   ],
+   "score": 0.023
+  },
+  {
+   "name": "麒麟资源",
+   "api": "https://www.qilinzyz.com/api.php/provide/vod/",
+   "host": "www.qilinzyz.com",
+   "ok": false,
+   "ms": 3000,
+   "cats": 0,
+   "searchable": false,
+   "okCount": 0,
+   "failCount": 1,
+   "lastWhy": "notjson",
+   "from": [
+    "gxnas/TvBox"
+   ],
+   "score": 0.023
+  },
+  {
+   "name": "光速资源",
+   "api": "https://api.guangsuapi.com/api.php/provide/vod/at/xml/",
+   "host": "api.guangsuapi.com",
+   "ok": false,
+   "ms": 3000,
+   "cats": 0,
+   "searchable": false,
+   "okCount": 0,
+   "failCount": 1,
+   "lastWhy": "notjson",
+   "from": [
+    "gxnas/TvBox"
+   ],
+   "score": 0.023
+  },
+  {
+   "name": "牛牛资源",
+   "api": "https://api.niuniuzy.me/api.php/provide/vod/from/nnm3u8/at/xml",
+   "host": "api.niuniuzy.me",
+   "ok": false,
+   "ms": 3000,
+   "cats": 0,
+   "searchable": false,
+   "okCount": 0,
+   "failCount": 1,
+   "lastWhy": "notjson",
+   "from": [
+    "gxnas/TvBox",
+    "songlees355-wq/okay"
+   ],
+   "score": 0.023
+  },
+  {
+   "name": "豪华资源",
+   "api": "https://hhzyapi.com/api.php/provide/vod/at/xml",
+   "host": "hhzyapi.com",
+   "ok": false,
+   "ms": 3000,
+   "cats": 0,
+   "searchable": false,
+   "okCount": 0,
+   "failCount": 1,
+   "lastWhy": "notjson",
+   "from": [
+    "gxnas/TvBox"
+   ],
+   "score": 0.023
+  },
+  {
+   "name": "海外看",
+   "api": "https://haiwaikan.com/api.php/provide/vod/",
+   "host": "haiwaikan.com",
+   "ok": false,
+   "ms": 3000,
+   "cats": 0,
+   "searchable": false,
+   "okCount": 0,
+   "failCount": 1,
+   "lastWhy": "neterr",
+   "from": [
+    "zhuzhuyule/juhe-subhub",
+    "kimwang1978/tvbox",
+    "Greatwallcorner/TV-Multiplatform",
+    "hebijunge/tvbox-config",
+    "multi:dxawi.github.io"
+   ],
+   "score": 0.023
+  },
+  {
+   "name": "熊熊",
+   "api": "https://v.3412.net.cn/macapi.php/provide/vod/",
+   "host": "v.3412.net.cn",
+   "ok": false,
+   "ms": 3000,
+   "cats": 0,
+   "searchable": false,
+   "okCount": 0,
+   "failCount": 1,
+   "lastWhy": "neterr",
+   "from": [
+    "maoystv/6"
+   ],
+   "score": 0.023
+  },
+  {
+   "name": "黑木影视",
+   "api": "https://heimuer.ggff.net/api.php/tvbox",
+   "host": "heimuer.ggff.net",
+   "ok": false,
+   "ms": 3000,
+   "cats": 0,
+   "searchable": false,
+   "okCount": 0,
+   "failCount": 1,
+   "lastWhy": "http403",
+   "from": [
+    "tushen6/Tattoo",
+    "hkwgit2024/TVBOXZD2"
+   ],
+   "score": 0.023
+  },
+  {
+   "name": "松视3",
+   "api": "https://api.sexnguon.com/api.php/provide/vod/",
+   "host": "api.sexnguon.com",
+   "ok": false,
+   "ms": 3000,
+   "cats": 0,
+   "searchable": false,
+   "okCount": 0,
+   "failCount": 1,
+   "lastWhy": "neterr",
+   "from": [
+    "DodgeZhang/tvbox"
+   ],
+   "score": 0.023
+  },
+  {
+   "name": "优质资源",
+   "api": "https://api.yzzy-api.com/inc/apijson.php/from/1080zyk",
+   "host": "api.yzzy-api.com",
+   "ok": false,
+   "ms": 3000,
+   "cats": 0,
+   "searchable": false,
+   "okCount": 0,
+   "failCount": 1,
+   "lastWhy": "timeout",
+   "from": [
+    "cyh92/live"
+   ],
+   "score": 0.023
+  },
+  {
+   "name": "快车｜采集",
+   "api": "https://https//caiji.kuaichezy.org/api.php/provide/vod/from/kcm3u8",
+   "host": "https",
+   "ok": false,
+   "ms": 3000,
+   "cats": 0,
+   "searchable": false,
+   "okCount": 0,
+   "failCount": 1,
+   "lastWhy": "neterr",
+   "from": [
+    "cyh92/live"
+   ],
+   "score": 0.023
+  },
+  {
+   "name": "步步高资源",
+   "api": "https://api.yparse.com/api/json",
+   "host": "api.yparse.com",
+   "ok": false,
+   "ms": 3000,
+   "cats": 0,
+   "searchable": false,
+   "okCount": 0,
+   "failCount": 1,
+   "lastWhy": "http403",
+   "from": [
+    "cyh92/live"
+   ],
+   "score": 0.023
+  },
+  {
+   "name": "如意资源",
+   "api": "https://cj.rycjapi.com/api.php/provide/vod/at/xml",
+   "host": "cj.rycjapi.com",
+   "ok": false,
+   "ms": 3000,
+   "cats": 0,
+   "searchable": false,
+   "okCount": 0,
+   "failCount": 1,
+   "lastWhy": "neterr",
+   "from": [
+    "cyh92/live"
+   ],
+   "score": 0.023
+  },
+  {
+   "name": "TV-卧龙资源",
+   "api": "https://collect.wolongzy.cc/api.php/provide/vod/",
+   "host": "collect.wolongzy.cc",
+   "ok": false,
+   "ms": 3000,
+   "cats": 0,
+   "searchable": false,
+   "okCount": 0,
+   "failCount": 1,
+   "lastWhy": "neterr",
+   "from": [
+    "cyh92/live"
+   ],
+   "score": 0.023
+  },
+  {
+   "name": "TV-豆瓣资源",
+   "api": "https://caiji.dbzy.tv/api.php/provide/vod/",
+   "host": "caiji.dbzy.tv",
+   "ok": false,
+   "ms": 3000,
+   "cats": 0,
+   "searchable": false,
+   "okCount": 0,
+   "failCount": 1,
+   "lastWhy": "neterr",
+   "from": [
+    "cyh92/live"
+   ],
+   "score": 0.023
+  },
+  {
+   "name": "爱短剧.cc",
+   "api": "https://www.aiduanju.cc/",
+   "host": "www.aiduanju.cc",
+   "ok": false,
+   "ms": 3000,
+   "cats": 0,
+   "searchable": false,
+   "okCount": 0,
+   "failCount": 1,
+   "lastWhy": "neterr",
+   "from": [
+    "cyh92/live"
+   ],
+   "score": 0.023
+  },
+  {
+   "name": "优质资源库1080zyk6.com高清",
+   "api": "https://api.yzzy-api.com/inc/ldg_api_all.php/provide/vod/",
+   "host": "api.yzzy-api.com",
+   "ok": false,
+   "ms": 3000,
+   "cats": 0,
+   "searchable": false,
+   "okCount": 0,
+   "failCount": 1,
+   "lastWhy": "timeout",
+   "from": [
+    "cyh92/live"
+   ],
+   "score": 0.023
+  },
+  {
+   "name": "山海官方资源站采集接口",
+   "api": "https://zy.sh0o.cn/api.php/provide/vod/",
+   "host": "zy.sh0o.cn",
+   "ok": false,
+   "ms": 3000,
+   "cats": 0,
+   "searchable": false,
+   "okCount": 0,
+   "failCount": 1,
+   "lastWhy": "neterr",
+   "from": [
+    "cyh92/live"
+   ],
+   "score": 0.023
+  },
+  {
+   "name": "🌼蓝天┃90",
+   "api": "https://90sr.com/api.php/provide/vod/",
+   "host": "90sr.com",
+   "ok": false,
+   "ms": 3000,
+   "cats": 0,
+   "searchable": false,
+   "okCount": 0,
+   "failCount": 1,
+   "lastWhy": "http404",
+   "from": [
+    "cyh92/live"
+   ],
+   "score": 0.023
+  },
+  {
+   "name": "乐猪",
+   "api": "http://pandown.pro/maoys/lezhu.php",
+   "host": "pandown.pro",
+   "ok": false,
+   "ms": 3000,
+   "cats": 0,
+   "searchable": false,
+   "okCount": 0,
+   "failCount": 1,
+   "lastWhy": "timeout",
+   "from": [
+    "Raowend/TVRule"
+   ],
+   "score": 0.023
+  },
+  {
+   "name": "精品",
+   "api": "https://www.jingpinx.com//api.php/provide/vod/",
+   "host": "www.jingpinx.com",
+   "ok": false,
+   "ms": 3000,
+   "cats": 0,
+   "searchable": false,
+   "okCount": 0,
+   "failCount": 1,
+   "lastWhy": "neterr",
+   "from": [
+    "yub168/myTvbox"
+   ],
+   "score": 0.023
+  },
+  {
+   "name": "色猫2",
+   "api": "https://api.maozyapi.com/inc/apijson_vod.php",
+   "host": "api.maozyapi.com",
+   "ok": false,
+   "ms": 3000,
+   "cats": 0,
+   "searchable": false,
+   "okCount": 0,
+   "failCount": 1,
+   "lastWhy": "http523",
+   "from": [
+    "yub168/myTvbox"
+   ],
+   "score": 0.023
+  },
+  {
+   "name": "花椒",
+   "api": "https://api.apilyzy.com/api.php/provide/vod/at/xml/",
+   "host": "api.apilyzy.com",
+   "ok": false,
+   "ms": 3000,
+   "cats": 0,
+   "searchable": false,
+   "okCount": 0,
+   "failCount": 1,
+   "lastWhy": "neterr",
+   "from": [
+    "yub168/myTvbox"
+   ],
+   "score": 0.023
+  },
+  {
+   "name": "AIvin",
+   "api": "http://lbapiby.com/api.php/provide/vod/at/xml",
+   "host": "lbapiby.com",
+   "ok": false,
+   "ms": 3000,
+   "cats": 0,
+   "searchable": false,
+   "okCount": 0,
+   "failCount": 1,
+   "lastWhy": "http502",
+   "from": [
+    "yub168/myTvbox"
+   ],
+   "score": 0.023
+  },
+  {
+   "name": "老鸭",
+   "api": "https://api.apilyzy.com/api.php/provide/vod/",
+   "host": "api.apilyzy.com",
+   "ok": false,
+   "ms": 3000,
+   "cats": 0,
+   "searchable": false,
+   "okCount": 0,
+   "failCount": 1,
+   "lastWhy": "neterr",
+   "from": [
+    "yub168/myTvbox"
+   ],
+   "score": 0.023
+  }
+ ]
+}

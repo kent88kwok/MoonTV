@@ -1,0 +1,356 @@
+{
+ "spider": "",
+ "wallPic": "",
+ "sites": [
+  {
+   "key": "hub_9e240bd5",
+   "name": "🍀｜360｜采集",
+   "type": 1,
+   "api": "https://360zy.com/api.php/seaxml/vod/",
+   "searchable": 1,
+   "quickSearch": 1,
+   "filterable": 1
+  },
+  {
+   "key": "hub_ae8995b8",
+   "name": "🔬 量子",
+   "type": 1,
+   "api": "https://cj.lziapi.com/api.php/provide/vod/",
+   "searchable": 1,
+   "quickSearch": 1,
+   "filterable": 1
+  },
+  {
+   "key": "hub_5730c931",
+   "name": "猫眼资源",
+   "type": 1,
+   "api": "https://api.maoyanapi.top/api.php/provide/vod/from/mym3u8",
+   "searchable": 1,
+   "quickSearch": 1,
+   "filterable": 1
+  },
+  {
+   "key": "hub_df126fc2",
+   "name": "TV-最大点播",
+   "type": 1,
+   "api": "http://zuidazy.me/api.php/provide/vod/",
+   "searchable": 1,
+   "quickSearch": 1,
+   "filterable": 1
+  },
+  {
+   "key": "hub_8714f867",
+   "name": "索尼|采集",
+   "type": 1,
+   "api": "https://suoniapi.com/api.php/provide/vod/at/json/",
+   "searchable": 0,
+   "quickSearch": 0,
+   "filterable": 1
+  },
+  {
+   "key": "hub_52154012",
+   "name": "优质 | 采集",
+   "type": 1,
+   "api": "https://api.yyzy-tv.vip/inc/apijson.php",
+   "searchable": 1,
+   "quickSearch": 1,
+   "filterable": 1
+  },
+  {
+   "key": "hub_ce8644ea",
+   "name": "影视 | 非凡",
+   "type": 1,
+   "api": "http://ffzy.tv/api.php/provide/vod/",
+   "searchable": 1,
+   "quickSearch": 1,
+   "filterable": 1
+  },
+  {
+   "key": "hub_5a0ead83",
+   "name": "360资源",
+   "type": 1,
+   "api": "https://360zy.com/api.php/provide/vod/",
+   "searchable": 1,
+   "quickSearch": 1,
+   "filterable": 1
+  },
+  {
+   "key": "hub_9b697826",
+   "name": "豪华|采集",
+   "type": 1,
+   "api": "https://hhzyapi.com/api.php/provide/vod/at/json/",
+   "searchable": 1,
+   "quickSearch": 1,
+   "filterable": 1
+  },
+  {
+   "key": "hub_16b47066",
+   "name": "最大资源",
+   "type": 1,
+   "api": "https://api.zuidapi.com/api.php/provide/vod/",
+   "searchable": 1,
+   "quickSearch": 1,
+   "filterable": 1
+  },
+  {
+   "key": "hub_6812af15",
+   "name": "📱天堂网ᶜʲ┃采集",
+   "type": 1,
+   "api": "http://caiji.dyttzyapi.com/api.php/provide/vod/from/dyttm3u8/at/json/",
+   "searchable": 1,
+   "quickSearch": 1,
+   "filterable": 1
+  },
+  {
+   "key": "hub_0c21324b",
+   "name": "360资源",
+   "type": 1,
+   "api": "https://360zyzz.com/api.php/provide/vod/at/json",
+   "searchable": 1,
+   "quickSearch": 1,
+   "filterable": 1
+  },
+  {
+   "key": "hub_d37a3bd6",
+   "name": "爱奇资源",
+   "type": 1,
+   "api": "https://www.iqiyizy.com/api.php/provide/vod/from/iqym3u8",
+   "searchable": 1,
+   "quickSearch": 1,
+   "filterable": 1
+  },
+  {
+   "key": "hub_38ca77cc",
+   "name": "非凡影视",
+   "type": 1,
+   "api": "http://api.ffzyapi.com/api.php/provide/vod/",
+   "searchable": 1,
+   "quickSearch": 1,
+   "filterable": 1
+  },
+  {
+   "key": "hub_c5ae6c22",
+   "name": "🐂 红牛",
+   "type": 1,
+   "api": "https://www.hongniuzy3.com/api.php/provide/vod/",
+   "searchable": 1,
+   "quickSearch": 1,
+   "filterable": 1
+  },
+  {
+   "key": "hub_ee076beb",
+   "name": "新浪资源(切)",
+   "type": 1,
+   "api": "http://api.xinlangapi.com/xinlangapi.php/provide/vod/",
+   "searchable": 1,
+   "quickSearch": 1,
+   "filterable": 1
+  },
+  {
+   "key": "hub_7e390ecc",
+   "name": "影视 | 建安",
+   "type": 1,
+   "api": "http://154.219.117.232:9981/jacloudapi.php/provide/vod/",
+   "searchable": 1,
+   "quickSearch": 1,
+   "filterable": 1
+  },
+  {
+   "key": "hub_7eeb0475",
+   "name": "🆕非凡┃资源",
+   "type": 1,
+   "api": "http://cj.ffzyapi.com/api.php/provide/vod/",
+   "searchable": 1,
+   "quickSearch": 1,
+   "filterable": 1
+  },
+  {
+   "key": "hub_3717c585",
+   "name": "无尽资源",
+   "type": 1,
+   "api": "https://api.wujinapi.me/api.php/provide/vod/",
+   "searchable": 0,
+   "quickSearch": 0,
+   "filterable": 1
+  },
+  {
+   "key": "hub_31c0ebd3",
+   "name": "TV-金鹰点播",
+   "type": 1,
+   "api": "https://jinyingzy.com/api.php/provide/vod/",
+   "searchable": 1,
+   "quickSearch": 1,
+   "filterable": 1
+  },
+  {
+   "key": "hub_57a32f8b",
+   "name": "闪电资源(切)",
+   "type": 1,
+   "api": "http://sdzyapi.com/api.php/provide/vod/",
+   "searchable": 0,
+   "quickSearch": 0,
+   "filterable": 1
+  },
+  {
+   "key": "hub_7fe19a00",
+   "name": "🌼金鹰┃资源🌼",
+   "type": 1,
+   "api": "https://jyzyapi.com/provide/vod/from/jinyingm3u8/at/json",
+   "searchable": 1,
+   "quickSearch": 1,
+   "filterable": 1
+  },
+  {
+   "key": "hub_680d8cfa",
+   "name": "🌼茅台┃影视🌼",
+   "type": 1,
+   "api": "https://caiji.maotaizy.cc/api.php/provide/vod/",
+   "searchable": 0,
+   "quickSearch": 0,
+   "filterable": 1
+  },
+  {
+   "key": "hub_94a9824f",
+   "name": "极速资源",
+   "type": 1,
+   "api": "https://jszyapi.com/api.php/provide/vod/at/json",
+   "searchable": 1,
+   "quickSearch": 1,
+   "filterable": 1
+  },
+  {
+   "key": "hub_d54de70c",
+   "name": "❤新浪资源",
+   "type": 1,
+   "api": "https://api.xinlangapi.com/xinlangapi.php/provide//vod/",
+   "searchable": 1,
+   "quickSearch": 1,
+   "filterable": 1
+  },
+  {
+   "key": "hub_53403101",
+   "name": "🕹️淘片┃采集",
+   "type": 1,
+   "api": "https://taopianapi.com/cjapi/mc/vod/json.html",
+   "searchable": 1,
+   "quickSearch": 1,
+   "filterable": 1
+  },
+  {
+   "key": "hub_1e667e71",
+   "name": "🦄黄色仓库(旧)｜🔞",
+   "type": 1,
+   "api": "https://hsckzy.vip/api.php/provide/vod/",
+   "searchable": 1,
+   "quickSearch": 1,
+   "filterable": 1
+  },
+  {
+   "key": "hub_06acd85e",
+   "name": "金鹰 | 采集",
+   "type": 1,
+   "api": "https://jyzyapi.com/api.php/provide/vod/",
+   "searchable": 1,
+   "quickSearch": 1,
+   "filterable": 1
+  },
+  {
+   "key": "hub_a88718ec",
+   "name": "天涯影视",
+   "type": 1,
+   "api": "https://ty.tyyszy5.com/api.php/provide/vod/from/tym3u8",
+   "searchable": 0,
+   "quickSearch": 0,
+   "filterable": 1
+  },
+  {
+   "key": "hub_86524a1f",
+   "name": "鸭鸭资源",
+   "type": 1,
+   "api": "https://cj.yayazy.net/api.php/provide/vod/",
+   "searchable": 0,
+   "quickSearch": 0,
+   "filterable": 1
+  },
+  {
+   "key": "hub_eb705591",
+   "name": "👖裤佬丨采集",
+   "type": 1,
+   "api": "https://api.wsyzy.net/api.php/provide/vod/",
+   "searchable": 0,
+   "quickSearch": 0,
+   "filterable": 1
+  },
+  {
+   "key": "hub_e9164a71",
+   "name": "飘零资源",
+   "type": 1,
+   "api": "https://p2100.net/api.php/provide/vod/",
+   "searchable": 1,
+   "quickSearch": 1,
+   "filterable": 1
+  },
+  {
+   "key": "hub_e8e70931",
+   "name": "🦄lsb资源｜🔞",
+   "type": 1,
+   "api": "https://apilsbzy1.com/api.php/provide/vod/",
+   "searchable": 1,
+   "quickSearch": 1,
+   "filterable": 1
+  },
+  {
+   "key": "hub_1e9202d4",
+   "name": "🥬牛牛资源",
+   "type": 1,
+   "api": "https://api.niuniuzy.me/api.php/provide/vod/",
+   "searchable": 0,
+   "quickSearch": 0,
+   "filterable": 1
+  },
+  {
+   "key": "hub_5dc51ccb",
+   "name": "🎞️天堂┃采集",
+   "type": 1,
+   "api": "http://caiji.dyttzyapi.com/api.php/provide/vod/from/dyttm3u8/at/m3u8/",
+   "searchable": 1,
+   "quickSearch": 1,
+   "filterable": 1
+  },
+  {
+   "key": "hub_7d7369ac",
+   "name": "神马",
+   "type": 1,
+   "api": "https://www.vod38.com/api.php/provide/vod/",
+   "searchable": 1,
+   "quickSearch": 1,
+   "filterable": 1
+  },
+  {
+   "key": "hub_b6bc46c9",
+   "name": "影视 | 天涯",
+   "type": 1,
+   "api": "http://tyyszy.com/api.php/provide/vod/",
+   "searchable": 0,
+   "quickSearch": 0,
+   "filterable": 1
+  },
+  {
+   "key": "hub_4518dc7c",
+   "name": "鸡坤 | 采集",
+   "type": 1,
+   "api": "https://jkunzyapi.com/api.php/provide/vod/",
+   "searchable": 1,
+   "quickSearch": 1,
+   "filterable": 1
+  }
+ ],
+ "lives": [],
+ "rule": {},
+ "ads": [],
+ "flags": [],
+ "ijk": [],
+ "dland": [],
+ "dr": {},
+ "version": "20261031"
+}

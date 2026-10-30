@@ -1,0 +1,408 @@
+<!doctype html>
+<html lang="zh-CN"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>TVBox Hub · 每日自动聚合源</title>
+<style>
+:root{--bg:#f7f8fa;--card:#fff;--bd:#e5e7eb;--tx:#111827;--mut:#6b7280;--acc:#2563eb;--good:#059669;--mid:#d97706;--slow:#dc2626}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--tx);font:15px/1.6 -apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",sans-serif}
+.wrap{max-width:860px;margin:0 auto;padding:28px 18px 60px}
+header h1{font-size:22px;margin:0 0 6px;letter-spacing:-.3px}
+header p{margin:0;color:var(--mut);font-size:13px}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin:22px 0}
+.stat{background:var(--card);border:1px solid var(--bd);border-radius:12px;padding:14px}
+.stat b{display:block;font-size:24px;line-height:1.2}
+.stat span{font-size:12px;color:var(--mut)}
+.cards{display:grid;gap:12px;margin:8px 0 26px}
+@media(min-width:640px){.cards{grid-template-columns:1fr 1fr 1fr}}
+.card{background:var(--card);border:1px solid var(--bd);border-radius:14px;padding:16px}
+.card-h{display:flex;justify-content:space-between;align-items:baseline;font-weight:600}
+.card-h b{font-size:20px}.card-h i{font-size:12px;font-weight:400;color:var(--mut);font-style:normal;margin-left:2px}
+.card p{margin:6px 0 12px;font-size:12.5px;color:var(--mut);min-height:38px}
+.url{display:flex;gap:6px;align-items:center}
+.url code{flex:1;background:#f3f4f6;border:1px solid var(--bd);border-radius:8px;padding:7px 9px;font-size:11.5px;overflow:auto;white-space:nowrap}
+.url button{border:0;background:var(--acc);color:#fff;border-radius:8px;padding:7px 12px;font-size:12.5px;cursor:pointer}
+.url button:active{opacity:.8}
+h2{font-size:15px;margin:0 0 10px}
+table{width:100%;border-collapse:collapse;background:var(--card);border:1px solid var(--bd);border-radius:12px;overflow:hidden;font-size:13px}
+th{text-align:left;font-weight:500;color:var(--mut);font-size:12px;padding:9px 10px;background:#fafafa;border-bottom:1px solid var(--bd)}
+td{padding:8px 10px;border-bottom:1px solid #f1f2f4}
+tr:last-child td{border-bottom:0}
+.idx{color:var(--mut);width:28px}.nm{font-weight:500}
+.host{color:var(--mut);font-size:12px;max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.num{text-align:right}.muted{color:var(--mut)}
+.pill{display:inline-block;padding:1px 7px;border-radius:99px;font-size:11.5px;font-variant-numeric:tabular-nums}
+.pill.good{background:#ecfdf5;color:var(--good)}.pill.mid{background:#fffbeb;color:var(--mid)}
+.pill.slow{background:#fef2f2;color:var(--slow)}.pill.dead{background:#f3f4f6;color:var(--mut)}
+.note{margin:26px 0 0;font-size:12.5px;color:var(--mut);background:var(--card);border:1px solid var(--bd);border-radius:12px;padding:14px 16px}
+.note b{color:var(--tx)}
+.toast{position:fixed;left:50%;bottom:32px;transform:translateX(-50%) translateY(20px);background:#111827;color:#fff;padding:9px 16px;border-radius:99px;font-size:13px;opacity:0;transition:.25s;pointer-events:none}
+.toast.on{opacity:1;transform:translateX(-50%) translateY(0)}
+</style></head><body><div class="wrap">
+<header>
+  <h1>TVBox Hub · 每日自动聚合源</h1>
+  <p>最近更新 2026/10/31 00:55:27 · 自动从 GitHub 发现 → 实测存活 → 按延迟排序</p>
+</header>
+<div class="stats">
+  <div class="stat"><b>80</b><span>可用接口</span></div>
+  <div class="stat"><b>38</b><span>极速源</span></div>
+  <div class="stat"><b>66</b><span>独立站点</span></div>
+  <div class="stat"><b>60</b><span>可搜索</span></div>
+</div>
+<div class="cards"><div class="card">
+      <div class="card-h"><span>⚡ 极速组</span><b>38<i>站</i></b></div>
+      <p>延迟 ≤1.2s 且分类 ≥15，日常首选</p>
+      <div class="url"><code data-path="tvbox-fast.json">tvbox-fast.json</code><button data-copy="tvbox-fast.json">复制</button></div>
+    </div><div class="card">
+      <div class="card-h"><span>📦 完整组</span><b>80<i>站</i></b></div>
+      <p>所有本次可用源，覆盖最广</p>
+      <div class="url"><code data-path="tvbox-all.json">tvbox-all.json</code><button data-copy="tvbox-all.json">复制</button></div>
+    </div><div class="card">
+      <div class="card-h"><span>🧊 备用组</span><b>1<i>站</i></b></div>
+      <p>历史稳定、本轮暂时连不上</p>
+      <div class="url"><code data-path="tvbox-backup.json">tvbox-backup.json</code><button data-copy="tvbox-backup.json">复制</button></div>
+    </div></div>
+<h2>可用源排行（Top 40）</h2>
+<table><thead><tr><th>#</th><th>名称</th><th>域名</th><th>延迟</th><th class="num">分类</th><th class="num">搜索</th><th class="num">稳定</th></tr></thead>
+<tbody><tr>
+      <td class="idx">1</td>
+      <td class="nm">🍀｜360｜采集</td>
+      <td class="host">360zy.com</td>
+      <td><span class="pill good">293ms</span></td>
+      <td class="num">51</td>
+      <td class="num">✓</td>
+      <td class="num muted">5/5</td>
+    </tr><tr>
+      <td class="idx">2</td>
+      <td class="nm">🔬 量子</td>
+      <td class="host">cj.lziapi.com</td>
+      <td><span class="pill good">158ms</span></td>
+      <td class="num">40</td>
+      <td class="num">✓</td>
+      <td class="num muted">5/5</td>
+    </tr><tr>
+      <td class="idx">3</td>
+      <td class="nm">猫眼资源</td>
+      <td class="host">api.maoyanapi.top</td>
+      <td><span class="pill mid">609ms</span></td>
+      <td class="num">53</td>
+      <td class="num">✓</td>
+      <td class="num muted">2/2</td>
+    </tr><tr>
+      <td class="idx">4</td>
+      <td class="nm">TV-最大点播</td>
+      <td class="host">zuidazy.me</td>
+      <td><span class="pill mid">756ms</span></td>
+      <td class="num">59</td>
+      <td class="num">✓</td>
+      <td class="num muted">2/2</td>
+    </tr><tr>
+      <td class="idx">5</td>
+      <td class="nm">索尼|采集</td>
+      <td class="host">suoniapi.com</td>
+      <td><span class="pill good">350ms</span></td>
+      <td class="num">61</td>
+      <td class="num">—</td>
+      <td class="num muted">2/2</td>
+    </tr><tr>
+      <td class="idx">6</td>
+      <td class="nm">优质 | 采集</td>
+      <td class="host">api.yyzy-tv.vip</td>
+      <td><span class="pill mid">840ms</span></td>
+      <td class="num">62</td>
+      <td class="num">✓</td>
+      <td class="num muted">5/5</td>
+    </tr><tr>
+      <td class="idx">7</td>
+      <td class="nm">影视 | 非凡</td>
+      <td class="host">ffzy.tv</td>
+      <td><span class="pill good">239ms</span></td>
+      <td class="num">31</td>
+      <td class="num">✓</td>
+      <td class="num muted">5/5</td>
+    </tr><tr>
+      <td class="idx">8</td>
+      <td class="nm">360资源</td>
+      <td class="host">360zy.com</td>
+      <td><span class="pill mid">687ms</span></td>
+      <td class="num">51</td>
+      <td class="num">✓</td>
+      <td class="num muted">6/6</td>
+    </tr><tr>
+      <td class="idx">9</td>
+      <td class="nm">豪华|采集</td>
+      <td class="host">hhzyapi.com</td>
+      <td><span class="pill mid">663ms</span></td>
+      <td class="num">48</td>
+      <td class="num">✓</td>
+      <td class="num muted">2/2</td>
+    </tr><tr>
+      <td class="idx">10</td>
+      <td class="nm">最大资源</td>
+      <td class="host">api.zuidapi.com</td>
+      <td><span class="pill mid">910ms</span></td>
+      <td class="num">59</td>
+      <td class="num">✓</td>
+      <td class="num muted">6/6</td>
+    </tr><tr>
+      <td class="idx">11</td>
+      <td class="nm">📱天堂网ᶜʲ┃采集</td>
+      <td class="host">caiji.dyttzyapi.com</td>
+      <td><span class="pill good">345ms</span></td>
+      <td class="num">32</td>
+      <td class="num">✓</td>
+      <td class="num muted">5/5</td>
+    </tr><tr>
+      <td class="idx">12</td>
+      <td class="nm">360资源</td>
+      <td class="host">360zyzz.com</td>
+      <td><span class="pill mid">792ms</span></td>
+      <td class="num">51</td>
+      <td class="num">✓</td>
+      <td class="num muted">6/6</td>
+    </tr><tr>
+      <td class="idx">13</td>
+      <td class="nm">爱奇资源</td>
+      <td class="host">www.iqiyizy.com</td>
+      <td><span class="pill mid">626ms</span></td>
+      <td class="num">43</td>
+      <td class="num">✓</td>
+      <td class="num muted">2/2</td>
+    </tr><tr>
+      <td class="idx">14</td>
+      <td class="nm">非凡影视</td>
+      <td class="host">api.ffzyapi.com</td>
+      <td><span class="pill good">378ms</span></td>
+      <td class="num">31</td>
+      <td class="num">✓</td>
+      <td class="num muted">6/6</td>
+    </tr><tr>
+      <td class="idx">15</td>
+      <td class="nm">🐂 红牛</td>
+      <td class="host">www.hongniuzy3.com</td>
+      <td><span class="pill mid">669ms</span></td>
+      <td class="num">44</td>
+      <td class="num">✓</td>
+      <td class="num muted">5/5</td>
+    </tr><tr>
+      <td class="idx">16</td>
+      <td class="nm">新浪资源(切)</td>
+      <td class="host">api.xinlangapi.com</td>
+      <td><span class="pill mid">757ms</span></td>
+      <td class="num">48</td>
+      <td class="num">✓</td>
+      <td class="num muted">5/5</td>
+    </tr><tr>
+      <td class="idx">17</td>
+      <td class="nm">影视 | 建安</td>
+      <td class="host">154.219.117.232:9981</td>
+      <td><span class="pill good">97ms</span></td>
+      <td class="num">21</td>
+      <td class="num">✓</td>
+      <td class="num muted">5/5</td>
+    </tr><tr>
+      <td class="idx">18</td>
+      <td class="nm">🆕非凡┃资源</td>
+      <td class="host">cj.ffzyapi.com</td>
+      <td><span class="pill good">585ms</span></td>
+      <td class="num">31</td>
+      <td class="num">✓</td>
+      <td class="num muted">6/6</td>
+    </tr><tr>
+      <td class="idx">19</td>
+      <td class="nm">无尽资源</td>
+      <td class="host">api.wujinapi.me</td>
+      <td><span class="pill mid">794ms</span></td>
+      <td class="num">63</td>
+      <td class="num">—</td>
+      <td class="num muted">6/6</td>
+    </tr><tr>
+      <td class="idx">20</td>
+      <td class="nm">TV-金鹰点播</td>
+      <td class="host">jinyingzy.com</td>
+      <td><span class="pill mid">916ms</span></td>
+      <td class="num">44</td>
+      <td class="num">✓</td>
+      <td class="num muted">2/2</td>
+    </tr><tr>
+      <td class="idx">21</td>
+      <td class="nm">闪电资源(切)</td>
+      <td class="host">sdzyapi.com</td>
+      <td><span class="pill mid">846ms</span></td>
+      <td class="num">59</td>
+      <td class="num">—</td>
+      <td class="num muted">5/5</td>
+    </tr><tr>
+      <td class="idx">22</td>
+      <td class="nm">🌼金鹰┃资源🌼</td>
+      <td class="host">jyzyapi.com</td>
+      <td><span class="pill mid">965ms</span></td>
+      <td class="num">44</td>
+      <td class="num">✓</td>
+      <td class="num muted">5/5</td>
+    </tr><tr>
+      <td class="idx">23</td>
+      <td class="nm">🌼茅台┃影视🌼</td>
+      <td class="host">caiji.maotaizy.cc</td>
+      <td><span class="pill mid">778ms</span></td>
+      <td class="num">54</td>
+      <td class="num">—</td>
+      <td class="num muted">5/5</td>
+    </tr><tr>
+      <td class="idx">24</td>
+      <td class="nm">极速资源</td>
+      <td class="host">jszyapi.com</td>
+      <td><span class="pill mid">1085ms</span></td>
+      <td class="num">48</td>
+      <td class="num">✓</td>
+      <td class="num muted">6/6</td>
+    </tr><tr>
+      <td class="idx">25</td>
+      <td class="nm">❤新浪资源</td>
+      <td class="host">api.xinlangapi.com</td>
+      <td><span class="pill mid">1087ms</span></td>
+      <td class="num">48</td>
+      <td class="num">✓</td>
+      <td class="num muted">5/5</td>
+    </tr><tr>
+      <td class="idx">26</td>
+      <td class="nm">🕹️淘片┃采集</td>
+      <td class="host">taopianapi.com</td>
+      <td><span class="pill mid">765ms</span></td>
+      <td class="num">30</td>
+      <td class="num">✓</td>
+      <td class="num muted">5/5</td>
+    </tr><tr>
+      <td class="idx">27</td>
+      <td class="nm">🦄黄色仓库(旧)｜🔞</td>
+      <td class="host">hsckzy.vip</td>
+      <td><span class="pill mid">1010ms</span></td>
+      <td class="num">41</td>
+      <td class="num">✓</td>
+      <td class="num muted">5/5</td>
+    </tr><tr>
+      <td class="idx">28</td>
+      <td class="nm">最大|点播</td>
+      <td class="host">zuida.xyz</td>
+      <td><span class="pill mid">1447ms</span></td>
+      <td class="num">59</td>
+      <td class="num">✓</td>
+      <td class="num muted">2/2</td>
+    </tr><tr>
+      <td class="idx">29</td>
+      <td class="nm">金鹰 | 采集</td>
+      <td class="host">jyzyapi.com</td>
+      <td><span class="pill mid">1127ms</span></td>
+      <td class="num">44</td>
+      <td class="num">✓</td>
+      <td class="num muted">5/5</td>
+    </tr><tr>
+      <td class="idx">30</td>
+      <td class="nm">天涯影视</td>
+      <td class="host">ty.tyyszy5.com</td>
+      <td><span class="pill good">600ms</span></td>
+      <td class="num">39</td>
+      <td class="num">—</td>
+      <td class="num muted">2/2</td>
+    </tr><tr>
+      <td class="idx">31</td>
+      <td class="nm">鸭鸭资源</td>
+      <td class="host">cj.yayazy.net</td>
+      <td><span class="pill mid">1041ms</span></td>
+      <td class="num">59</td>
+      <td class="num">—</td>
+      <td class="num muted">6/6</td>
+    </tr><tr>
+      <td class="idx">32</td>
+      <td class="nm">👖裤佬丨采集</td>
+      <td class="host">api.wsyzy.net</td>
+      <td><span class="pill mid">1066ms</span></td>
+      <td class="num">60</td>
+      <td class="num">—</td>
+      <td class="num muted">6/6</td>
+    </tr><tr>
+      <td class="idx">33</td>
+      <td class="nm">飘零资源</td>
+      <td class="host">p2100.net</td>
+      <td><span class="pill mid">868ms</span></td>
+      <td class="num">27</td>
+      <td class="num">✓</td>
+      <td class="num muted">6/6</td>
+    </tr><tr>
+      <td class="idx">34</td>
+      <td class="nm">🦄lsb资源｜🔞</td>
+      <td class="host">apilsbzy1.com</td>
+      <td><span class="pill mid">842ms</span></td>
+      <td class="num">25</td>
+      <td class="num">✓</td>
+      <td class="num muted">5/5</td>
+    </tr><tr>
+      <td class="idx">35</td>
+      <td class="nm">🥬牛牛资源</td>
+      <td class="host">api.niuniuzy.me</td>
+      <td><span class="pill mid">1146ms</span></td>
+      <td class="num">59</td>
+      <td class="num">—</td>
+      <td class="num muted">5/5</td>
+    </tr><tr>
+      <td class="idx">36</td>
+      <td class="nm">🎞️天堂┃采集</td>
+      <td class="host">caiji.dyttzyapi.com</td>
+      <td><span class="pill mid">997ms</span></td>
+      <td class="num">32</td>
+      <td class="num">✓</td>
+      <td class="num muted">5/5</td>
+    </tr><tr>
+      <td class="idx">37</td>
+      <td class="nm">神马</td>
+      <td class="host">www.vod38.com</td>
+      <td><span class="pill mid">1051ms</span></td>
+      <td class="num">34</td>
+      <td class="num">✓</td>
+      <td class="num muted">5/5</td>
+    </tr><tr>
+      <td class="idx">38</td>
+      <td class="nm">金鹰资源</td>
+      <td class="host">jyzyapi.com</td>
+      <td><span class="pill mid">1268ms</span></td>
+      <td class="num">44</td>
+      <td class="num">✓</td>
+      <td class="num muted">6/6</td>
+    </tr><tr>
+      <td class="idx">39</td>
+      <td class="nm">影视 | 天涯</td>
+      <td class="host">tyyszy.com</td>
+      <td><span class="pill mid">737ms</span></td>
+      <td class="num">39</td>
+      <td class="num">—</td>
+      <td class="num muted">5/5</td>
+    </tr><tr>
+      <td class="idx">40</td>
+      <td class="nm">豪华资源</td>
+      <td class="host">haohuazy.com</td>
+      <td><span class="pill mid">1375ms</span></td>
+      <td class="num">48</td>
+      <td class="num">✓</td>
+      <td class="num muted">2/2</td>
+    </tr></tbody></table>
+<div class="note">
+  <b>怎么用（影视仓 / TVBox）：</b>复制上面的完整地址 → 影视仓「设置 → 配置地址」粘贴 → 确定后重启。<br>
+  多仓入口：<code data-path="multi.json" style="font-size:12px">multi.json</code>（里面有极速/完整/备用三组可选）。<br>
+  <b>说明：</b>所有源均为公开采集站接口，机器每天实测一轮；延迟是在本机网络下测得，仅作参考。
+</div>
+</div>
+<div class="toast" id="t">已复制</div>
+<script>
+document.querySelectorAll('button[data-copy]').forEach(b=>{
+  b.addEventListener('click',async()=>{
+    const base=location.origin+location.pathname.replace(/[^/]*$/,'');
+    const url=base+b.dataset.copy;
+    b.textContent='复制中...';
+    try{await navigator.clipboard.writeText(url);}catch(e){
+      const ta=document.createElement('textarea');ta.value=url;document.body.appendChild(ta);ta.select();document.execCommand('copy');ta.remove();
+    }
+    b.textContent='已复制';const t=document.getElementById('t');t.classList.add('on');
+    setTimeout(()=>{t.classList.remove('on');b.textContent='复制'},1400);
+  });
+});
+</script></body></html>
